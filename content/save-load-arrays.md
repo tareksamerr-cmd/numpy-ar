@@ -1,5 +1,5 @@
 ---
-short_title: Sharing Array Data
+short_title: مشاركة بيانات المصفوفة
 jupytext:
   text_representation:
     extension: .md
@@ -12,39 +12,36 @@ kernelspec:
   name: python3
 ---
 
-# Saving and sharing your NumPy arrays
+# حفظ ومشاركة مصفوفات NumPy الخاصة بك
 
-## What you'll learn
+## ماذا ستتعلم (What you'll learn)
 
-You'll save your NumPy arrays as zipped files and human-readable
-comma-delimited files i.e. \*.csv. You will also learn to load both of these
-file types back into NumPy workspaces.
+ستقوم بحفظ مصفوفات NumPy الخاصة بك كملفات مضغوطة (zipped files) وملفات نصية قابلة للقراءة البشرية مفصولة بفواصل (comma-delimited files) أي `*.csv`. ستتعلم أيضًا كيفية تحميل كلا النوعين من الملفات مرة أخرى إلى مساحات عمل NumPy.
 
-## What you'll do
+## ماذا ستفعل (What you'll do)
 
-You'll learn two ways of saving and reading files--as compressed and as
-text files--that will serve most of your storage needs in NumPy.
+ستتعلم طريقتين لحفظ وقراءة الملفات - كملفات مضغوطة (compressed) وملفات نصية (text files) - والتي ستلبي معظم احتياجات التخزين الخاصة بك في NumPy.
 
-* You'll create two 1D arrays and one 2D array
-* You'll save these arrays to files
-* You'll remove variables from your workspace
-* You'll load the variables from your saved file
-* You'll compare zipped binary files to human-readable delimited files
-* You'll finish with the skills of saving, loading, and sharing NumPy arrays
+* ستنشئ مصفوفتين أحاديتي الأبعاد (1D arrays) ومصفوفة ثنائية الأبعاد (2D array)
+* ستقوم بحفظ هذه المصفوفات في ملفات
+* ستقوم بإزالة المتغيرات من مساحة عملك
+* ستقوم بتحميل المتغيرات من ملفك المحفوظ
+* ستقارن الملفات الثنائية المضغوطة (zipped binary files) بالملفات المحددة القابلة للقراءة البشرية (human-readable delimited files)
+* ستنهي بمهارات حفظ وتحميل ومشاركة مصفوفات NumPy
 
 
-## What you'll need
+## ماذا ستحتاج (What you'll need)
 
 * NumPy
-* read-write access to your working directory
+* إذن قراءة وكتابة (read-write access) إلى دليل العمل الخاص بك
 
-Load the necessary functions using the following command.
+قم بتحميل الدوال الضرورية باستخدام الأمر التالي.
 
 ```{code-cell}
 import numpy as np
 ```
 
-In this tutorial, you will use the following Python, IPython magic, and NumPy functions:
+في هذا البرنامج التعليمي، ستستخدم دوال Python و IPython magic و NumPy التالية:
 
 * [`np.arange`](https://numpy.org/doc/stable/reference/generated/numpy.arange.html)
 * [`np.savez`](https://numpy.org/doc/stable/reference/generated/numpy.savez.html)
@@ -60,13 +57,9 @@ In this tutorial, you will use the following Python, IPython magic, and NumPy fu
 
 ---
 
-## Create your arrays
+## إنشاء مصفوفاتك (Create your arrays)
 
-Now that you have imported the NumPy library, you can make a couple of
-arrays; let's start with two 1D arrays, `x` and `y`, where `y =
-x**2`.You
-will assign `x` to the integers from 0 to 9 using
-[`np.arange`](https://numpy.org/doc/stable/reference/generated/numpy.arange.html).
+الآن بعد أن قمت باستيراد مكتبة NumPy، يمكنك إنشاء مصفوفتين؛ لنبدأ بمصفوفتين أحاديتي الأبعاد (1D arrays)، `x` و `y`، حيث `y = x**2`. ستقوم بتعيين `x` للأعداد الصحيحة من 0 إلى 9 باستخدام [`np.arange`](https://numpy.org/doc/stable/reference/generated/numpy.arange.html).
 
 ```{code-cell}
 x = np.arange(10)
@@ -75,43 +68,31 @@ print(x)
 print(y)
 ```
 
-## Save your arrays with NumPy's [`savez`](https://numpy.org/doc/stable/reference/generated/numpy.savez.html?highlight=savez#numpy.savez)
+## حفظ مصفوفاتك باستخدام [`savez`](https://numpy.org/doc/stable/reference/generated/numpy.savez.html?highlight=savez#numpy.savez) من NumPy
 
-Now you have two arrays in your workspace,
+الآن لديك مصفوفتان في مساحة عملك،
 
 `x: [0 1 2 3 4 5 6 7 8 9]`
 
 `y: [ 0  1  4  9 16 25 36 49 64 81]`
 
-The first thing you will do is save them to a file as zipped arrays
-using
-[`savez`](https://numpy.org/doc/stable/reference/generated/numpy.savez.html?highlight=savez#numpy.savez).
-You will use two options to label the arrays in the file,
+أول شيء ستفعله هو حفظهما في ملف كمصفوفات مضغوطة (zipped arrays) باستخدام [`savez`](https://numpy.org/doc/stable/reference/generated/numpy.savez.html?highlight=savez#numpy.savez). ستستخدم خيارين لتسمية المصفوفات في الملف،
 
-1. `x_axis = x`: this option is assigning the name `x_axis` to the variable `x`
-2. `y_axis = y`: this option is assigning the name `y_axis` to the variable `y`
+1. `x_axis = x`: هذا الخيار يعين الاسم `x_axis` للمتغير `x`
+2. `y_axis = y`: هذا الخيار يعين الاسم `y_axis` للمتغير `y`
 
 ```{code-cell}
 np.savez("x_y-squared.npz", x_axis=x, y_axis=y)
 ```
 
-## Remove the saved arrays and load them back with NumPy's [`load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load)
+## إزالة المصفوفات المحفوظة وتحميلها مرة أخرى باستخدام [`load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load) من NumPy
 
-In your current working directory, you should have a new file with the
-name `x_y-squared.npz`. This file is a zipped binary of the two arrays,
-`x` and `y`. Let's clear the workspace and load the values back in. This
-`x_y-squared.npz` file contains two [NPY
-format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)
-files. The NPY format is a [native binary
-format](https://en.wikipedia.org/wiki/Binary_file). You cannot read
-the numbers in a standard text editor or spreadsheet.
+في دليل العمل الحالي الخاص بك، يجب أن يكون لديك ملف جديد بالاسم `x_y-squared.npz`. هذا الملف هو ثنائي مضغوط (zipped binary) للمصفوفتين، `x` و `y`. دعنا نمسح مساحة العمل ونحمل القيم مرة أخرى. يحتوي ملف `x_y-squared.npz` هذا على ملفين بتنسيق [NPY format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format). تنسيق NPY هو [تنسيق ثنائي أصلي (native binary format)](https://en.wikipedia.org/wiki/Binary_file). لا يمكنك قراءة الأرقام في محرر نصوص قياسي أو جدول بيانات.
 
-1. remove `x` and `y` from the workspaec with [`del`](https://docs.python.org/3/reference/simple_stmts.html#del)
-2. load the arrays into the workspace in a dictionary with [`np.load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load)
+1. إزالة `x` و `y` من مساحة العمل باستخدام [`del`](https://docs.python.org/3/reference/simple_stmts.html#del)
+2. تحميل المصفوفات إلى مساحة العمل في قاموس (dictionary) باستخدام [`np.load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load)
 
-To see what variables are in the workspace, use the Jupyter/IPython
-"magic" command
-[`whos`](https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-whos).
+لمعرفة المتغيرات الموجودة في مساحة العمل، استخدم أمر Jupyter/IPython "magic" [`whos`](https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-whos).
 
 ```{code-cell}
 del x, y
@@ -131,11 +112,9 @@ print(load_xy.files)
 %whos
 ```
 
-## Reassign the NpzFile arrays to `x` and `y`
+## إعادة تعيين مصفوفات NpzFile إلى `x` و `y`
 
-You've now created the dictionary with an `NpzFile`-type. The
-included files are `x_axis` and `y_axis` that you defined in your
-`savez` command. You can reassign `x` and `y` to the `load_xy` files.
+لقد أنشأت الآن القاموس بنوع `NpzFile`. الملفات المضمنة هي `x_axis` و `y_axis` التي قمت بتعريفها في أمر `savez` الخاص بك. يمكنك إعادة تعيين `x` و `y` لملفات `load_xy`.
 
 ```{code-cell}
 x = load_xy["x_axis"]
@@ -144,29 +123,18 @@ print(x)
 print(y)
 ```
 
-## Success
-You have created, saved, deleted, and loaded the variables `x` and `y` using `savez` and `load`. Nice work.
+## نجاح (Success)
+لقد قمت بإنشاء وحفظ وحذف وتحميل المتغيرات `x` و `y` باستخدام `savez` و `load`. عمل رائع.
 
-## Another option: saving to human-readable csv
-Let's consider another scenario, you want to share `x` and `y` with
-other people or other programs. You may need human-readable text file
-that is easier to share. Next, you use the
-[`savetxt`](https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html#numpy.savetxt)
-to save `x` and `y` in a comma separated value file, `x_y-squared.csv`.
-The resulting csv is composed of ASCII characters. You can load the file
-back into NumPy or read it with other programs.
+## خيار آخر: الحفظ إلى csv قابل للقراءة البشرية (Another option: saving to human-readable csv)
+دعنا نفكر في سيناريو آخر، تريد مشاركة `x` و `y` مع أشخاص آخرين أو برامج أخرى. قد تحتاج إلى ملف نصي قابل للقراءة البشرية (human-readable text file) يسهل مشاركته. بعد ذلك، ستستخدم [`savetxt`](https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html#numpy.savetxt) لحفظ `x` و `y` في ملف قيم مفصولة بفواصل (comma separated value file)، `x_y-squared.csv`. يتكون ملف csv الناتج من أحرف ASCII. يمكنك تحميل الملف مرة أخرى إلى NumPy أو قراءته ببرامج أخرى.
 
-## Rearrange the data into a single 2D array
-First, you have to create a single 2D array from your two 1D arrays. The
-csv-filetype is a spreadsheet-style dataset. The csv arranges numbers in
-rows--separated by new lines--and columns--separated by commas. If the
-data is more complex e.g. multiple 2D arrays or higher dimensional
-arrays, it is better to use `savez`. Here, you use
-two NumPy functions to format the data:
+## إعادة ترتيب البيانات في مصفوفة ثنائية الأبعاد واحدة (Rearrange the data into a single 2D array)
+أولاً، يجب عليك إنشاء مصفوفة ثنائية الأبعاد واحدة من مصفوفتيك أحاديتي الأبعاد. نوع ملف csv هو مجموعة بيانات على غرار جدول البيانات (spreadsheet-style dataset). يرتب csv الأرقام في صفوف - مفصولة بأسطر جديدة - وأعمدة - مفصولة بفواصل. إذا كانت البيانات أكثر تعقيدًا، على سبيل المثال، مصفوفات ثنائية الأبعاد متعددة أو مصفوفات ذات أبعاد أعلى، فمن الأفضل استخدام `savez`. هنا، ستستخدم دالتين من NumPy لتنسيق البيانات:
 
-1. [`np.block`](https://numpy.org/doc/stable/reference/generated/numpy.block.html?highlight=block#numpy.block): this function appends arrays together into a 2D array
+1. [`np.block`](https://numpy.org/doc/stable/reference/generated/numpy.block.html?highlight=block#numpy.block): هذه الدالة تلحق المصفوفات معًا في مصفوفة ثنائية الأبعاد
 
-2. [`np.newaxis`](https://numpy.org/doc/stable/reference/constants.html?highlight=newaxis#numpy.newaxis): this function forces the 1D array into a 2D column vector with 10 rows and 1 column.
+2. [`np.newaxis`](https://numpy.org/doc/stable/reference/constants.html?highlight=newaxis#numpy.newaxis): هذه الدالة تجبر المصفوفة أحادية الأبعاد على أن تكون متجه عمود ثنائي الأبعاد (2D column vector) بـ 10 صفوف وعمود واحد.
 
 ```{code-cell}
 array_out = np.block([x[:, np.newaxis], y[:, np.newaxis]])
@@ -174,40 +142,33 @@ print("the output array has shape ", array_out.shape, " with values:")
 print(array_out)
 ```
 
-## Save the data to csv file using [`savetxt`](https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html#numpy.savetxt)
+## حفظ البيانات في ملف csv باستخدام [`savetxt`](https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html#numpy.savetxt)
 
-You use `savetxt` with a three options to make your file easier to read:
+ستستخدم `savetxt` مع ثلاثة خيارات لجعل ملفك أسهل في القراءة:
 
-* `X = array_out`: this option tells `savetxt` to save your 2D array, `array_out`, to the file `x_y-squared.csv`
-* `header = 'x, y'`: this option writes a header before any data that labels the columns of the csv
-* `delimiter = ','`: this option tells `savetxt` to place a comma between each column in the file
+* `X = array_out`: هذا الخيار يخبر `savetxt` بحفظ مصفوفتك ثنائية الأبعاد، `array_out`، في الملف `x_y-squared.csv`
+* `header = 'x, y'`: هذا الخيار يكتب رأسًا قبل أي بيانات تسمي أعمدة csv
+* `delimiter = ','`: هذا الخيار يخبر `savetxt` بوضع فاصلة بين كل عمود في الملف
 
 ```{code-cell}
 np.savetxt("x_y-squared.csv", X=array_out, header="x, y", delimiter=",")
 ```
 
-Open the file, `x_y-squared.csv`, and you'll see the following:
+افتح الملف، `x_y-squared.csv`، وسترى ما يلي:
 
 ```{code-cell}
 !head x_y-squared.csv
 ```
 
-## Our arrays as a csv file
+## مصفوفاتنا كملف csv (Our arrays as a csv file)
 
-There are two features that you shoud notice here:
+هناك ميزتان يجب أن تلاحظهما هنا:
 
-1. NumPy uses `#` to ignore headings when using `loadtxt`. If you're using
-[`loadtxt`](https://numpy.org/doc/stable/reference/generated/numpy.loadtxt.html)
-with other csv files, you can skip header rows with `skiprows =
-<number_of_header_lines>`.
-2. The integers were written in scientific notation. _You can_ specify
-the format of the text using the `savetxt` option, [`fmt =
-`](https://docs.python.org/3/library/string.html#formatstrings), but it
-will still be written with ASCII characters. In general, you cannot
-preserve the type of ASCII numbers as `float` or `int`.
+1. تستخدم NumPy `#` لتجاهل العناوين عند استخدام `loadtxt`. إذا كنت تستخدم [`loadtxt`](https://numpy.org/doc/stable/reference/generated/numpy.loadtxt.html) مع ملفات csv أخرى، يمكنك تخطي صفوف الرأس باستخدام `skiprows = <number_of_header_lines>`.
+2. تمت كتابة الأعداد الصحيحة في التدوين العلمي (scientific notation). *يمكنك* تحديد تنسيق النص باستخدام خيار `savetxt`، [`fmt = `](https://docs.python.org/3/library/string.html#formatstrings)، لكنه سيظل مكتوبًا بأحرف ASCII. بشكل عام، لا يمكنك الحفاظ على نوع أرقام ASCII كـ `float` أو `int`.
 
 
-Now, delete `x` and `y` again and assign them to your columns in `x-y_squared.csv`.
+الآن، احذف `x` و `y` مرة أخرى وقم بتعيينهما لأعمدتك في `x-y_squared.csv`.
 
 ```{code-cell}
 del x, y
@@ -228,15 +189,14 @@ print(x)
 print(y)
 ```
 
-## Success, but remember your types
+## نجاح، ولكن تذكر أنواعك (Success, but remember your types)
 
-When you saved the arrays to the csv file, you did not preserve the
-`int` type. When loading the arrays back into your workspace the default process will be to load the csv file as a 2D floating point array e.g. `load_xy.dtype == 'float64'` and `load_xy.shape == (10, 2)`.
+عندما قمت بحفظ المصفوفات في ملف csv، لم تحافظ على نوع `int`. عند تحميل المصفوفات مرة أخرى إلى مساحة عملك، ستكون العملية الافتراضية هي تحميل ملف csv كمصفوفة نقطة عائمة ثنائية الأبعاد (2D floating point array) على سبيل المثال `load_xy.dtype == 'float64'` و `load_xy.shape == (10, 2)`.
 
 +++
 
-## Wrapping up
+## تلخيص (Wrapping up)
 
-In conclusion, you can create, save, and load arrays in NumPy. Saving arrays makes sharing your work and collaboration much easier. There are other ways Python can save data to files, such as [pickle](https://docs.python.org/3/library/pickle.html), but `savez` and `savetxt` will serve most of your storage needs for future NumPy work and sharing with other people, respectively.
+في الختام، يمكنك إنشاء وحفظ وتحميل المصفوفات في NumPy. يجعل حفظ المصفوفات مشاركة عملك والتعاون أسهل بكثير. هناك طرق أخرى يمكن لـ Python من خلالها حفظ البيانات في ملفات، مثل [pickle](https://docs.python.org/3/library/pickle.html)، ولكن `savez` و `savetxt` ستلبي معظم احتياجات التخزين الخاصة بك لعمل NumPy المستقبلي والمشاركة مع الآخرين، على التوالي.
 
-__Next steps__: you can import data with missing values from [Importing with genfromtext](https://numpy.org/devdocs/user/basics.io.genfromtxt.html) or learn more about general NumPy IO with [Reading and Writing Files](https://numpy.org/devdocs/user/how-to-io.html).
+__الخطوات التالية__: يمكنك استيراد البيانات ذات القيم المفقودة من [الاستيراد باستخدام genfromtext](https://numpy.org/devdocs/user/basics.io.genfromtxt.html) أو معرفة المزيد حول الإدخال/الإخراج العام لـ NumPy باستخدام [قراءة وكتابة الملفات](https://numpy.org/devdocs/user/how-to-io.html).

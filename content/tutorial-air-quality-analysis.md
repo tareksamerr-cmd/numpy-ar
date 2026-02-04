@@ -1,5 +1,5 @@
 ---
-short_title: Analyzing Air Quality
+short_title: تحليل جودة الهواء (Analyzing Air Quality)
 jupytext:
   formats: ipynb,md:myst
   text_representation:
@@ -13,46 +13,39 @@ kernelspec:
   name: python3
 ---
 
-# Analyzing the impact of the lockdown on air quality in Delhi, India
+# تحليل تأثير الإغلاق على جودة الهواء في دلهي، الهند (Analyzing the impact of the lockdown on air quality in Delhi, India)
 
 ![A grid showing the India Gate in smog above and clear air below](_static/11-delhi-aqi.jpg)
 
-## What you'll do
+## ما ستقوم به (What you'll do)
 
-Calculate Air Quality Indices (AQI) and perform paired Student's t-test on them.
+حساب مؤشرات جودة الهواء (Air Quality Indices - AQI) وإجراء اختبار t لستودنت المقترن (paired Student's t-test) عليها.
 
-## What you'll learn
+## ما ستتعلمه (What you'll learn)
 
-- You'll learn the concept of moving averages
+- ستتعلم مفهوم المتوسطات المتحركة (moving averages)
 
-- You'll learn how to calculate Air Quality Index (AQI)
+- ستتعلم كيفية حساب مؤشر جودة الهواء (Air Quality Index - AQI)
 
-- You'll learn how to perform a paired Student's t-test and find the `t` and `p` values
+- ستتعلم كيفية إجراء paired Student's t-test وإيجاد قيم `t` و `p`
 
-- You'll learn how to interpret these values
+- ستتعلم كيفية تفسير هذه القيم
 
+## ما ستحتاجه (What you'll need)
 
-## What you'll need
+- تثبيت [SciPy](https://scipy.org/install/) في بيئتك
 
-- [SciPy](https://scipy.org/install/) installed in your environment
-
-- Basic understanding of statistical terms like population, sample, mean, standard deviation etc.
-
+- فهم أساسي للمصطلحات الإحصائية مثل المجتمع (population)، والعينة (sample)، والمتوسط (mean)، والانحراف المعياري (standard deviation) وما إلى ذلك.
 
 ***
 
 +++
 
-## The problem of air pollution
+## مشكلة تلوث الهواء (The problem of air pollution)
 
-Air pollution is one of the most prominent types of pollution we face that has an immediate effect on our daily lives. The
-COVID-19 pandemic resulted in lockdowns in different parts of the world; offering a rare opportunity to study the effect of
-human activity (or lack thereof) on air pollution. In this tutorial, we will study the air quality in Delhi, one of the
-worst affected cities by air pollution, before and during the lockdown from March to June 2020. For this, we will first compute
-the Air Quality Index for each hour from the collected pollutant measurements. Next, we will sample these indices and perform
-a [paired Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test#Dependent_t-test_for_paired_samples) on them. It will statistically show us that the air quality improved due to the lockdown, supporting our intuition.
+يعد تلوث الهواء أحد أبرز أنواع التلوث التي نواجهها والتي لها تأثير مباشر على حياتنا اليومية. أدت جائحة كوفيد-19 (COVID-19) إلى عمليات إغلاق (lockdowns) في أجزاء مختلفة من العالم؛ مما وفر فرصة نادرة لدراسة تأثير النشاط البشري (أو انعدامه) على تلوث الهواء. في هذا البرنامج التعليمي، سندرس جودة الهواء في دلهي، وهي واحدة من أكثر المدن تضرراً من تلوث الهواء، قبل وأثناء الإغلاق من مارس إلى يونيو 2020. لهذا الغرض، سنقوم أولاً بحساب AQI لكل ساعة من قياسات الملوثات التي تم جمعها. بعد ذلك، سنأخذ عينات من هذه المؤشرات ونجري عليها [paired Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test#Dependent_t-test_for_paired_samples). سيوضح لنا ذلك إحصائياً أن جودة الهواء تحسنت بسبب الإغلاق، مما يدعم حدسنا.
 
-Let's start by importing the necessary libraries into our environment.
+لنبدأ باستيراد المكتبات اللازمة في بيئتنا.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -60,20 +53,18 @@ from numpy.random import default_rng
 from scipy import stats
 ```
 
-## Building the dataset
+## بناء مجموعة البيانات (Building the dataset)
 
-We will use a condensed version of the [Air Quality Data in India](https://www.kaggle.com/rohanrao/air-quality-data-in-india) dataset. This dataset contains air quality data and AQI (Air Quality Index) at hourly and daily level of various stations across multiple cities in India. The condensed version available with this tutorial contains hourly pollutant measurements for Delhi
-from May 31, 2019 to June 30, 2020. It has measurements of the standard pollutants that are required for Air Quality Index calculation and a few other important ones:
-Particulate Matter (PM 2.5 and PM 10), nitrogen dioxide (NO2), ammonia (NH3), sulfur dioxide (SO2), carbon monoxide (CO), ozone (O3), oxides of nitrogen (NOx), nitric oxide (NO), benzene, toluene, and xylene.
+سنستخدم نسخة مكثفة من مجموعة بيانات [بيانات جودة الهواء في الهند (Air Quality Data in India)](https://www.kaggle.com/rohanrao/air-quality-data-in-india). تحتوي مجموعة البيانات هذه على بيانات جودة الهواء و AQI على المستوى الساعي واليومي لمحطات مختلفة عبر مدن متعددة في الهند. تحتوي النسخة المكثفة المتاحة مع هذا البرنامج التعليمي على قياسات الملوثات الساعية لدلهي من 31 مايو 2019 إلى 30 يونيو 2020. وهي تتضمن قياسات للملوثات القياسية المطلوبة لحساب AQI وبعض الملوثات المهمة الأخرى:
+الجسيمات المعلقة (Particulate Matter - PM 2.5 و PM 10)، وثاني أكسيد النيتروجين (NO2)، والأمونيا (NH3)، وثاني أكسيد الكبريت (SO2)، وأول أكسيد الكربون (CO)، والأوزون (O3)، وأكاسيد النيتروجين (NOx)، وأكسيد النيتريك (NO)، والبنزين، والتولوين، والزيلين.
 
-Let's print out the first few rows to have a glimpse of our dataset.
+لنقم بطباعة الصفوف القليلة الأولى لإلقاء نظرة على مجموعة البيانات الخاصة بنا.
 
 ```{code-cell} ipython3
 ! head air-quality-data.csv
 ```
 
-For the purpose of this tutorial, we are only concerned with standard pollutants required for calculating the AQI, viz., PM 2.5, PM 10, NO2, NH3, SO2, CO, and O3. So, we will only import these particular columns with [np.loadtxt](https://numpy.org/devdocs/reference/generated/numpy.loadtxt.html). We'll then [slice](https://numpy.org/devdocs/glossary.html#term-0) and create two sets: `pollutants_A` with PM 2.5, PM 10, NO2, NH3, and SO2, and `pollutants_B` with CO and O3. The
-two sets will be processed slightly differently, as we'll see later on.
+لأغراض هذا البرنامج التعليمي، نحن مهتمون فقط بالملوثات القياسية المطلوبة لحساب AQI، وهي PM 2.5 و PM 10 و NO2 و NH3 و SO2 و CO و O3. لذا، سنقوم فقط باستيراد هذه الأعمدة المحددة باستخدام [np.loadtxt](https://numpy.org/devdocs/reference/generated/numpy.loadtxt.html). سنقوم بعد ذلك بـ [التقطيع (slice)](https://numpy.org/devdocs/glossary.html#term-0) وإنشاء مجموعتين: `pollutants_A` التي تحتوي على PM 2.5 و PM 10 و NO2 و NH3 و SO2، و `pollutants_B` التي تحتوي على CO و O3. سيتم معالجة المجموعتين بشكل مختلف قليلاً، كما سنرى لاحقاً.
 
 ```{code-cell} ipython3
 pollutant_data = np.loadtxt("air-quality-data.csv", dtype=float, delimiter=",",
@@ -85,50 +76,44 @@ print(pollutants_A.shape)
 print(pollutants_B.shape)
 ```
 
-Our dataset might contain missing values, denoted by `NaN`, so let's do a quick check with [np.isfinite](https://numpy.org/devdocs/reference/generated/numpy.isfinite.html).
+قد تحتوي مجموعة البيانات الخاصة بنا على قيم مفقودة، يرمز لها بـ `NaN` ، لذا لنقم بإجراء فحص سريع باستخدام [np.isfinite](https://numpy.org/devdocs/reference/generated/numpy.isfinite.html).
 
 ```{code-cell} ipython3
 np.all(np.isfinite(pollutant_data))
 ```
 
-With this, we have successfully imported the data and checked that it is complete. Let's move on to the AQI calculations!
+بهذا، نكون قد نجحنا في استيراد البيانات وتأكدنا من اكتمالها. لننتقل إلى حسابات AQI!
 
 +++
 
-## Calculating the Air Quality Index
+## حساب مؤشر جودة الهواء (Calculating the Air Quality Index)
 
+سنقوم بحساب AQI باستخدام [الطريقة (the method)](https://app.cpcbccr.com/ccr_docs/FINAL-REPORT_AQI_.pdf) المعتمدة من قبل [المجلس المركزي لمكافحة التلوث (Central Pollution Control Board)](https://www.cpcb.nic.in/national-air-quality-index/) في الهند. لتلخيص الخطوات:
 
-We will calculate the AQI using [the method](https://app.cpcbccr.com/ccr_docs/FINAL-REPORT_AQI_.pdf) adopted by the [Central Pollution Control Board](https://www.cpcb.nic.in/national-air-quality-index/) of India.  To summarize the steps:
+- جمع قيم متوسط التركيز على مدار 24 ساعة للملوثات القياسية؛ و8 ساعات في حالة CO و O3.
 
-- Collect 24-hourly average concentration values for the standard pollutants; 8-hourly in case of CO and O3.
-
-
-- Calculate the sub-indices for these pollutants with the formula:
-
+- حساب المؤشرات الفرعية (sub-indices) لهذه الملوثات باستخدام الصيغة:
 
     $$
     Ip = \dfrac{\text{IHi – ILo}}{\text{BPHi – BPLo}}\cdot{\text{Cp – BPLo}} + \text{ILo}
     $$
 
+    حيث:
 
-    Where,
+    `Ip` = المؤشر الفرعي للملوث `p`\
+    `Cp` = التركيز المتوسط للملوث `p`\
+    `BPHi` = نقطة انقطاع التركيز (concentration breakpoint) أي أكبر من أو تساوي `Cp`\
+    `BPLo` = نقطة انقطاع التركيز أي أقل من أو تساوي `Cp`\
+    `IHi` = قيمة AQI المقابلة لـ `BPHi`\
+    `ILo` = قيمة AQI المقابلة لـ `BPLo`
 
-    `Ip` = sub-index of pollutant `p`\
-    `Cp` = averaged concentration of pollutant `p`\
-    `BPHi` = concentration breakpoint i.e. greater than or equal to `Cp`\
-    `BPLo` = concentration breakpoint i.e. less than or equal to `Cp`\
-    `IHi` = AQI value corresponding to `BPHi`\
-    `ILo` = AQI value corresponding to `BPLo`
-    
+- الحد الأقصى للمؤشر الفرعي في أي وقت معين هو Air Quality Index.
 
-- The maximum sub-index at any given time is the Air Quality Index.
-    
-The Air Quality Index is calculated with the help of breakpoint ranges as shown in the chart below.
+يتم حساب Air Quality Index بمساعدة نطاقات نقاط الانقطاع (breakpoint ranges) كما هو موضح في المخطط أدناه.
 
 ![Chart of the breakpoint ranges](_static/11-breakpoints.png)
 
-
-Let's create two arrays to store the AQI ranges and breakpoints so that we can use them later for our calculations.
+لنقم بإنشاء مصفوفتين لتخزين نطاقات AQI ونقاط الانقطاع حتى نتمكن من استخدامهما لاحقاً في حساباتنا.
 
 ```{code-cell} ipython3
 AQI = np.array([0, 51, 101, 201, 301, 401, 501])
@@ -144,13 +129,11 @@ breakpoints = {
 }
 ```
 
-### Moving averages
+### المتوسطات المتحركة (Moving averages)
 
-For the first step, we have to compute [moving averages](https://en.wikipedia.org/wiki/Moving_average) for `pollutants_A` over a window of 24 hours and `pollutants_B` over a
-window of 8 hours. We will write a simple function `moving_mean` using [np.cumsum](https://numpy.org/devdocs/reference/generated/numpy.cumsum.html) and [sliced indexing](https://numpy.org/devdocs/user/basics.indexing.html#slicing-and-striding) to achieve this.
+للخطوة الأولى، يتعين علينا حساب moving averages لـ `pollutants_A` عبر نافذة مدتها 24 ساعة ولـ `pollutants_B` عبر نافذة مدتها 8 ساعات. سنكتب دالة بسيطة `moving_mean` باستخدام [np.cumsum](https://numpy.org/devdocs/reference/generated/numpy.cumsum.html) و [الفهرسة المقطعة (sliced indexing)](https://numpy.org/devdocs/user/basics.indexing.html#slicing-and-striding) لتحقيق ذلك.
 
-To make sure both the sets are of the same length, we will truncate the `pollutants_B_8hr_avg` according to the length of
-`pollutants_A_24hr_avg`. This will also ensure we have concentrations for all the pollutants over the same period of time.
+للتأكد من أن كلتا المجموعتين لهما نفس الطول، سنقوم باقتطاع `pollutants_B_8hr_avg` وفقاً لطول `pollutants_A_24hr_avg`. سيضمن ذلك أيضاً أن لدينا تركيزات لجميع الملوثات خلال نفس الفترة الزمنية.
 
 ```{code-cell} ipython3
 def moving_mean(a, n):
@@ -162,22 +145,21 @@ pollutants_A_24hr_avg = moving_mean(pollutants_A, 24)
 pollutants_B_8hr_avg = moving_mean(pollutants_B, 8)[-(pollutants_A_24hr_avg.shape[0]):]
 ```
 
-Now, we can join both sets with [np.concatenate](https://numpy.org/devdocs/reference/generated/numpy.concatenate.html) to form a single data set of all the averaged concentrations. Note that we have to join our arrays column-wise so we pass the
-`axis=1` parameter.
+الآن، يمكننا دمج المجموعتين باستخدام [np.concatenate](https://numpy.org/devdocs/reference/generated/numpy.concatenate.html) لتشكيل مجموعة بيانات واحدة لجميع التركيزات المتوسطة. لاحظ أنه يتعين علينا دمج مصفوفاتنا على مستوى الأعمدة، لذا نمرر المعامل `axis=1`.
 
 ```{code-cell} ipython3
 pollutants = np.concatenate((pollutants_A_24hr_avg, pollutants_B_8hr_avg), axis=1)
 ```
 
-### Sub-indices
+### المؤشرات الفرعية (Sub-indices)
 
-The subindices for each pollutant are calculated according to the linear relationship between the AQI and standard breakpoint ranges with the formula as above: 
+يتم حساب sub-indices لكل ملوث وفقاً للعلاقة الخطية بين AQI ونطاقات نقاط الانقطاع القياسية باستخدام الصيغة المذكورة أعلاه:
 
 $$
 Ip = \dfrac{\text{IHi – ILo}}{\text{BPHi – BPLo}}\cdot{\text{Cp – BPLo}} + \text{ILo}
 $$
 
-The `compute_indices` function first fetches the correct upper and lower bounds of AQI categories and breakpoint concentrations for the input concentration and pollutant with the help of arrays `AQI` and `breakpoints` we created above. Then, it feeds these values into the formula to calculate the sub-index.
+تقوم دالة `compute_indices` أولاً بجلب الحدود العليا والدنيا الصحيحة لفئات AQI وتركيزات نقاط الانقطاع للتركيز والملوث المدخلين بمساعدة مصفوفات `AQI` و `breakpoints` التي أنشأناها أعلاه. ثم تقوم بتغذية هذه القيم في الصيغة لحساب المؤشر الفرعي.
 
 ```{code-cell} ipython3
 def compute_indices(pol, con):
@@ -230,13 +212,13 @@ def compute_indices(pol, con):
     return ((Ih - Il) / (Bh - Bl)) * (con - Bl) + Il
 ```
 
-We will use [np.vectorize](https://numpy.org/devdocs/reference/generated/numpy.vectorize.html) to utilize the concept of vectorization. This simply means we don't have loop over each element of the pollutant array ourselves. [Vectorization](https://numpy.org/devdocs/user/whatisnumpy.html#why-is-numpy-fast) is one of the key advantages of NumPy.
+سنستخدم [np.vectorize](https://numpy.org/devdocs/reference/generated/numpy.vectorize.html) للاستفادة من مفهوم الاتجاهية (vectorization). وهذا يعني ببساطة أننا لا نحتاج إلى المرور عبر كل عنصر في مصفوفة الملوثات بأنفسنا. تعد [Vectorization](https://numpy.org/devdocs/user/whatisnumpy.html#why-is-numpy-fast) واحدة من المزايا الرئيسية لـ NumPy.
 
 ```{code-cell} ipython3
 vcompute_indices = np.vectorize(compute_indices)
 ```
 
-By calling our vectorized function `vcompute_indices` for each pollutant, we get the sub-indices. To get back an array with the original shape, we use [np.stack](https://numpy.org/devdocs/reference/generated/numpy.stack.html).
+من خلال استدعاء دالتنا الموجهة `vcompute_indices` لكل ملوث، نحصل على المؤشرات الفرعية. للعودة إلى مصفوفة بالشكل الأصلي، نستخدم [np.stack](https://numpy.org/devdocs/reference/generated/numpy.stack.html).
 
 ```{code-cell} ipython3
 sub_indices = np.stack((vcompute_indices('PM2.5', pollutants[..., 0]),
@@ -248,35 +230,32 @@ sub_indices = np.stack((vcompute_indices('PM2.5', pollutants[..., 0]),
                         vcompute_indices('O3', pollutants[..., 6])), axis=1)
 ```
 
-### Air quality indices
+### مؤشرات جودة الهواء (Air quality indices)
 
-Using [np.max](https://numpy.org/devdocs/reference/generated/numpy.maximum.html), we find out the maximum sub-index for each period, which is our Air Quality Index!
+باستخدام [np.max](https://numpy.org/devdocs/reference/generated/numpy.maximum.html)، نجد الحد الأقصى للمؤشر الفرعي لكل فترة، وهو Air Quality Index الخاص بنا!
 
 ```{code-cell} ipython3
 aqi_array = np.max(sub_indices, axis=1)
 ```
 
-With this, we have the AQI for every hour from June 1, 2019 to June 30, 2020. Note that even though we started out with
-the data from 31st May, we truncated that during the moving averages step.
+بهذا، أصبح لدينا AQI لكل ساعة من 1 يونيو 2019 إلى 30 يونيو 2020. لاحظ أنه على الرغم من أننا بدأنا بالبيانات من 31 مايو، إلا أننا قمنا باقتطاعها خلال خطوة moving averages.
 
 +++
 
-## Paired Student's t-test on the AQIs
+## اختبار t لستودنت المقترن على قيم AQI (Paired Student's t-test on the AQIs)
 
-Hypothesis testing is a form of descriptive statistics used to help us make decisions with the data. From the calculated AQI data, we want to find out if there was a statistically significant difference in average AQI before and after the lockdown was imposed. We will use the left-tailed, [paired Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test#Dependent_t-test_for_paired_samples) to compute two test statistics- the [`t statistic`](https://en.wikipedia.org/wiki/T-statistic) and the [`p value`](https://en.wikipedia.org/wiki/P-value). We will then compare these with the corresponding critical values to make a decision.
+اختبار الفرضيات (Hypothesis testing) هو شكل من أشكال الإحصاء الوصفي المستخدم لمساعدتنا في اتخاذ القرارات بناءً على البيانات. من بيانات AQI المحسوبة، نريد معرفة ما إذا كان هناك فرق ذو دلالة إحصائية في متوسط AQI قبل وبعد فرض الإغلاق. سنستخدم [paired Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test#Dependent_t-test_for_paired_samples) ذو الطرف الأيسر لحساب إحصائيتين للاختبار - [`إحصائية t` (t statistic)](https://en.wikipedia.org/wiki/T-statistic) و [`قيمة p` (p value)](https://en.wikipedia.org/wiki/P-value). سنقوم بعد ذلك بمقارنة هذه القيم مع القيم الحرجة المقابلة لاتخاذ القرار.
 
 ![Normal distribution plot showing area of rejection in one-tailed test (left tailed)](_static/11-one-tailed-test.svg)
 
-### Sampling
-
-We will now import the `datetime` column from our original dataset into a [*datetime64* dtype](https://numpy.org/devdocs/reference/arrays.scalars.html) array. We will use this array to index the AQI array and obtain subsets of the dataset.
+### أخذ العينات (Sampling)
 
 ```{code-cell} ipython3
 datetime = np.loadtxt("air-quality-data.csv", dtype='M8[h]', delimiter=",",
                          skiprows=1, usecols=(0, ))[-(pollutants_A_24hr_avg.shape[0]):]
 ```
 
-Since total lockdown commenced in Delhi from March 24, 2020, the after-lockdown subset is of the period March 24, 2020 to June 30, 2020. The before-lockdown subset is for the same length of time before 24th March.
+بما أن الإغلاق التام بدأ في دلهي من 24 مارس 2020، فإن المجموعة الفرعية لما بعد الإغلاق هي للفترة من 24 مارس 2020 إلى 30 يونيو 2020. المجموعة الفرعية لما قبل الإغلاق هي لنفس الفترة الزمنية قبل 24 مارس.
 
 ```{code-cell} ipython3
 after_lock = aqi_array[np.where(datetime >= np.datetime64('2020-03-24T00'))]
@@ -287,7 +266,7 @@ print(after_lock.shape)
 print(before_lock.shape)
 ```
 
-To make sure our samples are *approximately* normally distributed, we take samples of size `n = 30`. `before_sample` and `after_sample` are the set of random observations drawn before and after the total lockdown. We use [random.Generator.choice](https://numpy.org/devdocs/reference/random/generated/numpy.random.Generator.choice.html) to generate the samples.
+للتأكد من أن عيناتنا موزعة توزيعاً طبيعياً *تقريباً*، نأخذ عينات بحجم `n = 30`. `before_sample` و `after_sample` هما مجموعة الملاحظات العشوائية المسحوبة قبل وبعد الإغلاق التام. نستخدم [random.Generator.choice](https://numpy.org/devdocs/reference/random/generated/numpy.random.Generator.choice.html) لتوليد العينات.
 
 ```{code-cell} ipython3
 rng = default_rng()
@@ -296,28 +275,28 @@ before_sample = rng.choice(before_lock, size=30, replace=False)
 after_sample = rng.choice(after_lock, size=30, replace=False)
 ```
 
-### Defining the hypothesis
+### تعريف الفرضية (Defining the hypothesis)
 
-Let us assume that there is no significant difference between the sample means before and after the lockdown. This will be the null hypothesis. The alternative hypothesis would be that there *is* a significant difference between the means and the AQI *improved*. Mathematically,
+دعونا نفترض أنه لا يوجد فرق جوهري بين متوسطات العينات قبل وبعد الإغلاق. ستكون هذه هي الفرضية الصفرية (null hypothesis). الفرضية البديلة (alternative hypothesis) ستكون أن هناك فرقاً جوهرياً بين المتوسطات وأن AQI قد *تحسن*. رياضياً:
 
 $H_{0}: \mu_\text{after-before} = 0$ \
 $H_{a}: \mu_\text{after-before} < 0$
 
 +++
 
-### Calculating the test statistics
+### حساب إحصائيات الاختبار (Calculating the test statistics)
 
-We will use the `t` statistic to evaluate our hypothesis and even calculate the `p value` from it. The formula for the `t` statistic is:
+سنستخدم إحصائية `t` لتقييم فرضيتنا وحتى حساب `p value` منها. صيغة إحصائية `t` هي:
 
 $$
 t = \frac{\mu_\text{after-before}}{\sqrt{\sigma^{2}/n}}
 $$
 
-where,
+حيث:
 
-$\mu_\text{after-before}$ = mean differences of samples \
-$\sigma^{2}$ = variance of mean differences \
-$n$ = sample size
+$\mu_\text{after-before}$ = متوسط فروق العينات \
+$\sigma^{2}$ = تباين متوسط الفروق \
+$n$ = حجم العينة
 
 ```{code-cell} ipython3
 def t_test(x, y):
@@ -330,7 +309,7 @@ def t_test(x, y):
 t_value = t_test(before_sample, after_sample)
 ```
 
-For the `p` value, we will use SciPy's `stats.distributions.t.cdf()` function. It takes two arguments- the `t statistic` and the degrees of freedom (`dof`). The formula for `dof` is `n - 1`.
+بالنسبة لـ `p value` ، سنستخدم دالة `stats.distributions.t.cdf()` من SciPy. وهي تأخذ وسيطين - `t statistic` ودرجات الحرية (`dof`). صيغة `dof` هي `n - 1`.
 
 ```{code-cell} ipython3
 dof = len(before_sample) - 1
@@ -340,33 +319,32 @@ p_value = stats.distributions.t.cdf(t_value, dof)
 print("The t value is {} and the p value is {}.".format(t_value, p_value))
 ```
 
-## What do the `t` and `p` values mean?
+## ماذا تعني قيم `t` و `p`؟ (What do the `t` and `p` values mean?)
 
-We will now compare the calculated test statistics with the critical test statistics. The critical `t` value is calculated by looking up the [t-distribution table](https://en.wikipedia.org/wiki/Student%27s_t-distribution#Table_of_selected_values).
+سنقوم الآن بمقارنة إحصائيات الاختبار المحسوبة مع إحصائيات الاختبار الحرجة. يتم حساب قيمة `t` الحرجة من خلال البحث في [جدول توزيع t (t-distribution table)](https://en.wikipedia.org/wiki/Student%27s_t-distribution#Table_of_selected_values).
 
 ![Table of selected t values at different confidence levels. T value for 29 dof at 95% confidence level is highlighted with a yellow square](_static/11-t-table.png)
 
-From the table above, the critical value is 1.699 for 29 `dof` at a confidence level of 95%. Since we are using the left tailed test, our critical value is -1.699. Clearly, the calculated `t` value is less than the critical value so we can safely reject the null hypothesis.
+من الجدول أعلاه، القيمة الحرجة هي 1.699 لـ 29 `dof` عند مستوى ثقة 95%. بما أننا نستخدم اختبار الطرف الأيسر، فإن قيمتنا الحرجة هي -1.699. من الواضح أن قيمة `t` المحسوبة أقل من القيمة الحرجة، لذا يمكننا رفض null hypothesis بأمان.
 
-The critical `p` value, denoted by $\alpha$, is usually chosen to be 0.05, corresponding to a confidence level of 95%. If the calculated `p` value is less than $\alpha$, then the null hypothesis can be safely rejected. Clearly, our `p` value is much less than $\alpha$, so we can reject the null hypothesis.
+قيمة `p` الحرجة، والتي يرمز لها بـ $\alpha$ ، عادة ما يتم اختيارها لتكون 0.05، وهو ما يقابل مستوى ثقة 95%. إذا كانت `p value` المحسوبة أقل من $\alpha$ ، فيمكن رفض null hypothesis بأمان. من الواضح أن `p value` لدينا أقل بكثير من $\alpha$ ، لذا يمكننا رفض null hypothesis.
 
-Note that this does not mean we can accept the alternative hypothesis. It only tells us that there is not enough evidence to reject $H_{a}$. In other words, we fail to reject the alternative hypothesis so, it *may* be true.
+لاحظ أن هذا لا يعني أنه يمكننا قبول alternative hypothesis. إنه يخبرنا فقط أنه لا يوجد دليل كافٍ لرفض $H_{a}$. بعبارة أخرى، فشلنا في رفض alternative hypothesis، لذا *قد* تكون صحيحة.
 
 +++
 
 ***
 
-## In practice...
+## في الممارسة العملية... (In practice...)
 
-- The [pandas](https://pandas.pydata.org/) library is preferable to use for time-series data analysis.
+- يفضل استخدام مكتبة [pandas](https://pandas.pydata.org/) لتحليل بيانات السلاسل الزمنية (time-series data).
 
-- The SciPy stats module provides the [stats.ttest_rel](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html) function which can be used to get the `t statistic` and `p value`.
+- توفر وحدة SciPy stats دالة [stats.ttest_rel](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html) والتي يمكن استخدامها للحصول على `t statistic` و `p value`.
 
-- In real life, data are generally not normally distributed. There are tests for such non-normal data like the [Wilcoxon test](https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test).
+- في الحياة الواقعية، لا تكون البيانات عادةً موزعة توزيعاً طبيعياً. هناك اختبارات لمثل هذه البيانات غير الطبيعية مثل [اختبار ويلكوكسون (Wilcoxon test)](https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test).
 
-## Further reading
+## قراءات إضافية (Further reading)
 
-- There are a host of statistical tests you can choose according to the characteristics of the given data. Read more about them at
-[A Gentle Introduction to Statistical Data Distributions](https://machinelearningmastery.com/statistical-data-distributions/).
+- هناك مجموعة من الاختبارات الإحصائية التي يمكنك اختيارها وفقاً لخصائص البيانات المعطاة. اقرأ المزيد عنها في [مقدمة لطيفة لتوزيعات البيانات الإحصائية (A Gentle Introduction to Statistical Data Distributions)](https://machinelearningmastery.com/statistical-data-distributions/).
 
-- There are various versions of the [Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test) that you can adopt according to your needs.
+- هناك إصدارات مختلفة من [Student's t-test](https://en.wikipedia.org/wiki/Student%27s_t-test) التي يمكنك اعتمادها وفقاً لاحتياجاتك.

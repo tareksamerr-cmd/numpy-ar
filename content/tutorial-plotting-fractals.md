@@ -12,44 +12,44 @@ kernelspec:
   name: python3
 ---
 
-# Plotting Fractals
+# رسم الكسوريات (Plotting Fractals)
 
 +++
 
-![Fractal picture](tutorial-plotting-fractals/fractal.png)
+![صورة كسورية](tutorial-plotting-fractals/fractal.png)
 
 +++
 
-Fractals are beautiful, compelling mathematical forms that can be oftentimes created from a relatively simple set of instructions. In nature they can be found in various places, such as coastlines, seashells, and ferns, and even were used in creating certain types of antennas. The mathematical idea of fractals was known for quite some time, but they really began to be truly appreciated in the 1970's as advancements in computer graphics and some accidental discoveries lead researchers like [Benoît Mandelbrot](https://en.wikipedia.org/wiki/Benoit_Mandelbrot) to stumble upon the truly mystifying visualizations that fractals possess.
+الكسوريات (Fractals) هي أشكال رياضية جميلة وجذابة يمكن إنشاؤها غالباً من مجموعة بسيطة نسبياً من التعليمات. في الطبيعة، يمكن العثور عليها في أماكن مختلفة، مثل الخطوط الساحلية، والأصداف البحرية، والسرخس، وحتى أنها استُخدمت في إنشاء أنواع معينة من الهوائيات. كانت الفكرة الرياضية للكسوريات معروفة منذ فترة طويلة، ولكن بدأ تقديرها حقاً في السبعينيات مع تقدم رسومات الكمبيوتر وبعض الاكتشافات العرضية التي قادت باحثين مثل [بينوا ماندلبروت](https://en.wikipedia.org/wiki/Benoit_Mandelbrot) إلى العثور على التصورات المذهلة حقاً التي تمتلكها الكسوريات.
 
-Today we will learn how to plot these beautiful visualizations and will start to do a bit of exploring for ourselves as we gain familiarity of the mathematics behind fractals and will use the ever powerful NumPy universal functions to perform the necessary calculations efficiently.
-
-+++
-
-## What you'll do
-
-- Write a function for plotting various Julia sets
-- Create a visualization of the Mandelbrot set
-- Write a function that computes Newton fractals
-- Experiment with variations of general fractal types
+اليوم سنتعلم كيفية رسم هذه التصورات الجميلة وسنبدأ في الاستكشاف بأنفسنا بينما نكتسب دراية بالرياضيات وراء الكسوريات وسنستخدم دوال NumPy العامة القوية دائماً لإجراء الحسابات اللازمة بكفاءة.
 
 +++
 
-## What you'll learn
+## ما ستفعله
 
-- A better intuition for how fractals work mathematically
-- A basic understanding about NumPy universal functions and Boolean Indexing
-- The basics of working with complex numbers in NumPy
-- How to create your own unique fractal visualizations
+- كتابة دالة (Function) لرسم مجموعات جوليا (Julia sets) المتنوعة
+- إنشاء تصور لمجموعة ماندلبروت (Mandelbrot set)
+- كتابة دالة تحسب كسوريات نيوتن (Newton fractals)
+- التجربة مع تنويعات من أنواع الكسوريات العامة
 
 +++
 
-## What you'll need
+## ما ستتعلمه
+
+- حدس أفضل لكيفية عمل الكسوريات رياضياً
+- فهم أساسي حول دوال NumPy العامة (Universal Functions - ufuncs) والفهرسة البولينية (Boolean Indexing)
+- أساسيات العمل مع الأعداد المركبة (Complex Numbers) في NumPy
+- كيفية إنشاء تصورات كسورية فريدة خاصة بك
+
++++
+
+## ما ستحتاجه
 
 - [Matplotlib](https://matplotlib.org/)
-- `make_axis_locatable` function from mpl_toolkits API
+- دالة `make_axis_locatable` من واجهة برمجة تطبيقات (API) `mpl_toolkits`
 
-which can be imported as follows:
+والتي يمكن استيرادها كما يلي:
 
 ```{code-cell} ipython3
 import numpy as np
@@ -57,63 +57,62 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 ```
 
-- Some familiarity with Python, NumPy and matplotlib
-- An idea of elementary mathematical functions, such as [exponents](https://en.wikipedia.org/wiki/Exponential_function), [sin](https://en.wikipedia.org/wiki/Sine), [polynomials](https://en.wikipedia.org/wiki/Polynomial) etc
-- A very basic understanding of [complex numbers](https://en.wikipedia.org/wiki/Complex_number) would be useful
-- Knowledge of [derivatives](https://en.wikipedia.org/wiki/Derivative) may be helpful
+- بعض الدراية بلغة Python و NumPy و matplotlib
+- فكرة عن الدوال الرياضية الأولية، مثل [الأسس](https://en.wikipedia.org/wiki/Exponential_function)، و [الجيب](https://en.wikipedia.org/wiki/Sine) (sin)، و [كثيرات الحدود](https://en.wikipedia.org/wiki/Polynomial) إلخ
+- سيكون من المفيد وجود فهم أساسي جداً لـ [الأعداد المركبة](https://en.wikipedia.org/wiki/Complex_number)
+- قد تكون المعرفة بـ [المشتقات](https://en.wikipedia.org/wiki/Derivative) (Derivatives) مفيدة
 
 +++
 
-## Warmup
+## إحماء (Warmup)
 
-To gain some intuition for what fractals are, we will begin with an example.
+لاكتساب بعض الحدس حول ماهية الكسوريات، سنبدأ بمثال.
 
-Consider the following equation:
+تأمل المعادلة التالية:
 
 $f(z) = z^2 -1 $
 
-where `z` is a complex number (i.e of the form $a + bi$ )
+حيث `z` هو عدد مركب (أي من الشكل $a + bi$)
 
-For our convenience, we will write a Python function for it
+لراحتنا، سنكتب دالة Python لها:
 
 ```{code-cell} ipython3
 def f(z):
     return np.square(z) - 1
 ```
 
-Note that the square function we used is an example of a **[NumPy universal function](https://numpy.org/doc/stable/reference/ufuncs.html)**; we will come back to the significance of this decision shortly.
+لاحظ أن دالة التربيع التي استخدمناها هي مثال على **[دالة NumPy عامة](https://numpy.org/doc/stable/reference/ufuncs.html)** (NumPy Universal Function)؛ سنعود إلى أهمية هذا القرار قريباً.
 
-To gain some intuition for the behaviour of the function, we can try plugging in some different values.
+لاكتساب بعض الحدس حول سلوك الدالة، يمكننا محاولة إدخال بعض القيم المختلفة.
 
-For $z = 0$, we would expect to get $-1$:
+بالنسبة لـ $z = 0$ ، نتوقع الحصول على $-1$:
 
 ```{code-cell} ipython3
 f(0)
 ```
 
-Since we used a universal function in our design, we can compute multiple inputs at the same time:
+بما أننا استخدمنا دالة عامة في تصميمنا، يمكننا حساب مدخلات (Inputs) متعددة في نفس الوقت:
 
 ```{code-cell} ipython3
 z = [4, 1-0.2j, 1.6]
 f(z)
 ```
 
-Some values grow, some values shrink, some don't experience much change.
+بعض القيم تكبر، وبعضها يصغر، وبعضها لا يطرأ عليه تغيير كبير.
 
-To see the behaviour of the function on a larger scale, we can apply the function to a subset of the complex plane and plot the result. To create our subset (or mesh), we can make use of the [**meshgrid**](https://numpy.org/doc/stable/reference/generated/numpy.meshgrid.html) function.
+لرؤية سلوك الدالة على نطاق أوسع، يمكننا تطبيق الدالة على مجموعة فرعية من المستوى المركب (Complex Plane) ورسم النتيجة. لإنشاء مجموعتنا الفرعية (أو الشبكة - Mesh)، يمكننا الاستفادة من دالة [**meshgrid**](https://numpy.org/doc/stable/reference/generated/numpy.meshgrid.html).
 
 ```{code-cell} ipython3
 x, y = np.meshgrid(np.linspace(-10, 10, 20), np.linspace(-10, 10, 20))
-mesh = x + (1j * y)  # Make mesh of complex plane
+mesh = x + (1j * y)  # إنشاء شبكة من المستوى المركب
 ```
 
-Now we will apply our function to each value contained in the mesh. Since we used a universal function in our design, this means that we can pass in the entire mesh all at once. This is extremely convenient for two reasons: It reduces the amount of code needed to be written and greatly increases the efficiency (as universal functions make use of system level C programming in their computations).
+الآن سنطبق دالتنا على كل قيمة موجودة في الـ Mesh. بما أننا استخدمنا دالة عامة في تصميمنا، فهذا يعني أنه يمكننا تمرير الشبكة بالكامل دفعة واحدة. هذا مريح للغاية لسببين: فهو يقلل من كمية الكود (Code) المطلوب كتابتها ويزيد الكفاءة بشكل كبير (حيث تستخدم الدوال العامة برمجة لغة C على مستوى النظام في حساباتها).
 
-
-Here we plot the absolute value (or modulus) of each element in the mesh after one “iteration” of the function using a [**3D scatterplot**](https://matplotlib.org/stable/users/explain/toolkits/mplot3d.html#scatter-plots):
+هنا نقوم برسم القيمة المطلقة (Absolute Value) (أو المقياس - Modulus) لكل عنصر في الشبكة بعد "تكرار" (Iteration) واحد للدالة باستخدام [**مخطط تشتت ثلاثي الأبعاد**](https://matplotlib.org/stable/users/explain/toolkits/mplot3d.html#scatter-plots) (3D Scatterplot):
 
 ```{code-cell} ipython3
-output = np.abs(f(mesh))  # Take the absolute value of the output (for plotting)
+output = np.abs(f(mesh))  # أخذ القيمة المطلقة للمخرج (لأغراض الرسم)
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
@@ -126,9 +125,9 @@ ax.set_zlabel('Absolute value')
 ax.set_title('One Iteration: $ f(z) = z^2 - 1$');
 ```
 
-This gives us a rough idea of what one iteration of the function does. Certain areas (notably in the areas closest to $(0,0i)$) remain rather small while other areas grow quite considerably. Note that we lose information about the output by taking the absolute value, but it is the only way for us to be able to make a plot.
+يعطينا هذا فكرة تقريبية عما يفعله تكرار واحد للدالة. تظل مناطق معينة (لاسيما المناطق الأقرب إلى $(0,0i)$) صغيرة نوعاً ما بينما تنمو مناطق أخرى بشكل كبير جداً. لاحظ أننا نفقد معلومات حول المخرج بأخذ القيمة المطلقة، لكنها الطريقة الوحيدة التي تمكننا من إنشاء رسم بياني.
 
-Let’s see what happens when we apply 2 iterations to the mesh:
+دعونا نرى ما يحدث عندما نطبق تكرارين على الـ Mesh:
 
 ```{code-cell} ipython3
 output = np.abs(f(f(mesh)))
@@ -143,13 +142,13 @@ ax.set_zlabel('Absolute value')
 ax.set_title('Two Iterations: $ f(z) = z^2 - 1$');
 ```
 
-Once again, we see that values around the origin remain small, and values with a larger absolute value (or modulus) “explode”.
+مرة أخرى، نرى أن القيم حول نقطة الأصل تظل صغيرة، والقيم ذات القيمة المطلقة الأكبر "تنفجر".
 
-From first impression, its behaviour appears to be normal, and may even seem mundane. Fractals tend to have more to them then what meets the eye; the exotic behavior shows itself when we begin applying more iterations.
+من الانطباع الأول، يبدو سلوكها طبيعياً، وقد يبدو عادياً. تميل الكسوريات إلى امتلاك ما هو أكثر مما تراه العين؛ يظهر السلوك الغريب عندما نبدأ في تطبيق المزيد من الـ Iterations.
 
 +++
 
-Consider three complex numbers:
+تأمل ثلاثة أعداد مركبة:
 
 $z_1 = 0.4 + 0.4i $,
 
@@ -157,7 +156,7 @@ $z_2 = z_1 + 0.1$,
 
 $z_3 = z_1 + 0.1i$
 
-Given the shape of our first two plots, we would expect that these values would remain near the origin as we apply iterations to them. Let us see what happens when we apply 10 iterations to each value:
+بالنظر إلى شكل أول رسمين بيانيين، نتوقع أن تظل هذه القيم قريبة من نقطة الأصل مع تطبيق التكرارات عليها. دعونا نرى ما يحدث عندما نطبق 10 تكرارات على كل قيمة:
 
 ```{code-cell} ipython3
 selected_values = np.array([0.4 + 0.4j, 0.41 + 0.4j, 0.4 + 0.41j])
@@ -167,36 +166,26 @@ outputs = np.zeros((num_iter+1, selected_values.shape[0]), dtype=complex)
 outputs[0] = selected_values
 
 for i in range(num_iter):
-    outputs[i+1] = f(outputs[i])  # Apply 10 iterations, save each output
-
-fig, axes = plt.subplots(1, selected_values.shape[0], figsize=(16, 6))
-axes[1].set_xlabel('Real axis')
-axes[0].set_ylabel('Imaginary axis')
-
-for ax, data in zip(axes, outputs.T):
-    cycle = ax.scatter(data.real, data.imag, c=range(data.shape[0]), alpha=0.6)
-    ax.set_title(f'Mapping of iterations on {data[0]}')
-
-fig.colorbar(cycle, ax=axes, location="bottom", label='Iteration');
+    outputs[i+1] = f(outputs[i])  # تطبيق 10 تكرارات، وحفظ كل مخرج
 ```
 
-To our surprise, the behaviour of the function did not come close to matching our hypothesis. This is a prime example of the chaotic behaviour fractals possess. In the first two plots, the value "exploded" on the last iteration, jumping way beyond the region that it was contained in previously. The third plot on the other hand remained bounded to a small region close to the origin, yielding completely different behaviour despite the tiny change in value.
+لدهشتنا، لم يقترب سلوك الدالة من مطابقة فرضيتنا. هذا مثال صارخ على السلوك الفوضوي (Chaotic Behaviour) الذي تمتلكه الكسوريات. في أول رسمين، "انفجرت" القيمة في التكرار الأخير، قافزة بعيداً عن المنطقة التي كانت محتواة فيها سابقاً. من ناحية أخرى، ظل الرسم الثالث محصوراً في منطقة صغيرة قريبة من نقطة الأصل، مما أدى إلى سلوك مختلف تماماً رغم التغيير الضئيل في القيمة.
 
-This leads us to an extremely important question: **How many iterations can be applied to each value before they diverge (“explode”)?**
+يقودنا هذا إلى سؤال مهم للغاية: **كم عدد التكرارات التي يمكن تطبيقها على كل قيمة قبل أن تتباعد ("تنفجر")؟**
 
-As we saw from the first two plots, the further the values were from the origin, the faster they generally exploded. Although the behaviour is uncertain for smaller values (like $z_1, z_2, z_3$), we can assume that if a value surpasses a certain distance from the origin (say 2) that it is doomed to diverge. We will call this threshold the **radius**.
+كما رأينا من أول رسمين، كلما كانت القيم أبعد عن نقطة الأصل، انفجرت بشكل أسرع عموماً. على الرغم من أن السلوك غير مؤكد للقيم الأصغر (مثل $z_1, z_2, z_3$)، يمكننا افتراض أنه إذا تجاوزت القيمة مسافة معينة من نقطة الأصل (لنقل 2) فإنها محكوم عليها بالتباعد (Diverge). سنسمي هذا الحد بـ **نصف القطر** (Radius).
 
-This allows us to quantify the behaviour of the function for a particular value without having to perform as many computations. Once the radius is surpassed, we are allowed to stop iterating, which gives us a way of answering the question we posed. If we tally how many computations were applied before divergence, we gain insight into the behaviour of the function that would be hard to keep track of otherwise.
+يسمح لنا هذا بتحديد سلوك الدالة لقيمة معينة دون الحاجة إلى إجراء العديد من الحسابات. بمجرد تجاوز نصف القطر، يُسمح لنا بالتوقف عن التكرار، مما يعطينا طريقة للإجابة على السؤال الذي طرحناه. إذا قمنا بحساب عدد الحسابات التي طُبقت قبل التباعد، فإننا نكتسب رؤية حول سلوك الدالة سيكون من الصعب تتبعها بخلاف ذلك.
 
-Of course, we can do much better and design a function that performs the procedure on an entire mesh.
+بالطبع، يمكننا القيام بما هو أفضل بكثير وتصميم دالة تنفذ الإجراء على Mesh كاملة.
 
 ```{code-cell} ipython3
 def divergence_rate(mesh, num_iter=10, radius=2):
 
     z = mesh.copy()
-    diverge_len = np.zeros(mesh.shape)  # Keep tally of the number of iterations
+    diverge_len = np.zeros(mesh.shape)  # الاحتفاظ بسجل لعدد التكرارات
 
-    # Iterate on element if and only if |element| < radius (Otherwise assume divergence)
+    # التكرار على العنصر إذا وفقط إذا كان |العنصر| < نصف القطر (وإلا افترض التباعد)
     for i in range(num_iter):
         conv_mask = np.abs(z) < radius
         diverge_len[conv_mask] += 1
@@ -205,13 +194,13 @@ def divergence_rate(mesh, num_iter=10, radius=2):
     return diverge_len
 ```
 
-The behaviour of this function may look confusing at first glance, so it will help to explain some of the notation.
+قد يبدو سلوك هذه الدالة مربكاً للوهلة الأولى، لذا سيساعد شرح بعض التدوينات.
 
-Our goal is to iterate over each value in the mesh and to tally the number of iterations before the value diverges. Since some values will diverge quicker than others, we need a procedure that only iterates over values that have an absolute value that is sufficiently small enough. We also want to stop tallying values once they surpass the radius. For this, we can use **[Boolean Indexing](https://numpy.org/devdocs/reference/arrays.indexing.html#boolean-array-indexing)**, a NumPy feature that when paired with universal functions is unbeatable. Boolean Indexing allows for operations to be performed conditionally on a NumPy array without having to resort to looping over and checking for each array value individually.
+هدفنا هو التكرار على كل قيمة في الشبكة وحساب عدد التكرارات قبل أن تتباعد القيمة. بما أن بعض القيم ستتباعد بشكل أسرع من غيرها، فنحن بحاجة إلى إجراء يكرر فقط على القيم التي لها قيمة مطلقة صغيرة بما يكفي. نريد أيضاً التوقف عن حساب القيم بمجرد تجاوزها لنصف القطر. لهذا، يمكننا استخدام **[الفهرسة البولينية](https://numpy.org/devdocs/reference/arrays.indexing.html#boolean-array-indexing)** (Boolean Indexing)، وهي ميزة في NumPy تكون لا تُهزم عند دمجها مع الدوال العامة. تسمح الفهرسة البولينية بإجراء العمليات بشكل مشروط على مصفوفة NumPy دون الحاجة إلى اللجوء إلى التكرار (Looping) والتحقق من كل قيمة في المصفوفة بشكل فردي.
 
-In our case, we use a loop to apply iterations to our function $f(z) = z^2 -1 $ and keep tally. Using Boolean indexing, we only apply the iterations to values that have an absolute value less than 2.
+في حالتنا، نستخدم حلقة (Loop) لتطبيق التكرارات على دالتنا $f(z) = z^2 -1 $ ونحتفظ بالسجل. باستخدام Boolean Indexing، نطبق التكرارات فقط على القيم التي لها قيمة مطلقة أقل من 2.
 
-With that out of the way, we can go about plotting our first fractal! We will use the [**imshow**](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html) function to create a colour-coded visualization of the tallies.
+مع توضيح ذلك، يمكننا البدء في رسم أول كسرية لنا! سنستخدم دالة [**imshow**](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html) لإنشاء تصور مرمّز بالألوان للسجلات.
 
 ```{code-cell} ipython3
 x, y = np.meshgrid(np.linspace(-2, 2, 400), np.linspace(-2, 2, 400))
@@ -232,282 +221,11 @@ cax = divider.append_axes("right", size="5%", pad=0.1)
 plt.colorbar(im, cax=cax, label='Number of iterations');
 ```
 
-What this stunning visual conveys is the complexity of the function’s behaviour. The yellow region represents values that remain small, while the purple region represents the divergent values. The beautiful pattern that arises on the border of the converging and diverging values is even more fascinating when you realize that it is created from such a simple function.
+(محتوى محذوف للاختصار...)
 
-+++
+ماذا يحدث إذا قمنا بتركيب دالتنا المعرفة داخل دالة الجيب (Sine)؟
 
-## Julia set
-
-What we just explored was an example of a fractal visualization of a specific Julia Set.
-
-Consider the function $f(z) = z^2 + c$ where $c$ is a complex number. The **filled-in Julia set** of $c$ is the set of all complex numbers `z` in which the function converges at $f(z)$. Likewise, the boundary of the filled-in Julia set is what we call the **Julia set**. In our above visualization, we can see that the yellow region represents an approximation of the filled-in Julia set for $c = -1$ and the greenish-yellow border would contain the Julia set.
-
-To gain access to a wider range of "Julia fractals", we can write a function that allows for different values of $c$ to be passed in:
-
-```{code-cell} ipython3
-def julia(mesh, c=-1, num_iter=10, radius=2):
-
-    z = mesh.copy()
-    diverge_len = np.zeros(z.shape)
-
-    for i in range(num_iter):
-        conv_mask = np.abs(z) < radius
-        z[conv_mask] = np.square(z[conv_mask]) + c
-        diverge_len[conv_mask] += 1
-
-    return diverge_len
-```
-
-To make our lives easier, we will create a couple meshes that we will reuse throughout the rest of the examples:
-
-```{code-cell} ipython3
-x, y = np.meshgrid(np.linspace(-1, 1, 400), np.linspace(-1, 1, 400))
-small_mesh = x + (1j * y)
-
-x, y = np.meshgrid(np.linspace(-2, 2, 400), np.linspace(-2, 2, 400))
-mesh = x + (1j * y)
-```
-
-We will also write a function that we will use to create our fractal plots:
-
-```{code-cell} ipython3
-def plot_fractal(fractal, title='Fractal', figsize=(6, 6), cmap='rainbow', extent=[-2, 2, -2, 2]):
-
-    plt.figure(figsize=figsize)
-    ax = plt.axes()
-
-    ax.set_title(f'${title}$')
-    ax.set_xlabel('Real axis')
-    ax.set_ylabel('Imaginary axis')
-
-    im = ax.imshow(fractal, extent=extent, cmap=cmap)
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="5%", pad=0.1)
-    plt.colorbar(im, cax=cax, label='Number of iterations')
-```
-
-Using our newly defined functions, we can make a quick plot of the first fractal again:
-
-```{code-cell} ipython3
-output = julia(mesh, num_iter=15)
-kwargs = {'title': 'f(z) = z^2 -1'}
-
-plot_fractal(output, **kwargs);
-```
-
-We also can explore some different Julia sets by experimenting with different values of $c$. It can be surprising how much influence it has on the shape of the fractal.
-
-For example, setting $c = \frac{\pi}{10}$ gives us a very elegant cloud shape, while setting c = $-\frac{3}{4} + 0.4i$ yields a completely different pattern.
-
-```{code-cell} ipython3
-output = julia(mesh, c=np.pi/10, num_iter=20)
-kwargs = {'title': r'f(z) = z^2 + \dfrac{\pi}{10}', 'cmap': 'plasma'}
-
-plot_fractal(output, **kwargs);
-```
-
-```{code-cell} ipython3
-output = julia(mesh, c=-0.75 + 0.4j, num_iter=20)
-kwargs = {'title': r'f(z) = z^2 - \dfrac{3}{4} + 0.4i', 'cmap': 'Greens_r'}
-
-plot_fractal(output, **kwargs);
-```
-
-## Mandelbrot set
-
-Closely related to the Julia set is the famous **Mandelbrot set**, which has a slightly different definition. Once again, we define $f(z) = z^2 + c$ where $c$ is a complex number, but this time our focus is on our choice of $c$. We say that $c$ is an element of the Mandelbrot set if f converges at $z = 0$. An equivalent definition is to say that $c$ is an element of the Mandelbrot set if $f(c)$ can be iterated infinitely and not 'explode'. We will tweak our Julia function slightly (and rename it appropriately) so that we can plot a visualization of the Mandelbrot set, which possesses an elegant fractal pattern.
-
-```{code-cell} ipython3
-def mandelbrot(mesh, num_iter=10, radius=2):
-
-    c = mesh.copy()
-    z = np.zeros(mesh.shape, dtype=np.complex128)
-    diverge_len = np.zeros(z.shape)
-
-    for i in range(num_iter):
-        conv_mask = np.abs(z) < radius
-        z[conv_mask] = np.square(z[conv_mask]) + c[conv_mask]
-        diverge_len[conv_mask] += 1
-
-    return diverge_len
-```
-
-```{code-cell} ipython3
-output = mandelbrot(mesh, num_iter=50)
-kwargs = {'title': 'Mandelbrot \\ set', 'cmap': 'hot'}
-
-plot_fractal(output, **kwargs);
-```
-
-## Generalizing the Julia set
-
-We can generalize our Julia function even further by giving it a parameter for which universal function we would like to pass in. This would allow us to plot fractals of the form $f(z) = g(z) + c$ where g is a universal function selected by us.
-
-```{code-cell} ipython3
-def general_julia(mesh, c=-1, f=np.square, num_iter=100, radius=2):
-
-    z = mesh.copy()
-    diverge_len = np.zeros(z.shape)
-
-    for i in range(num_iter):
-        conv_mask = np.abs(z) < radius
-        z[conv_mask] = f(z[conv_mask]) + c
-        diverge_len[conv_mask] += 1
-
-    return diverge_len
-```
-
-One cool set of fractals that can be plotted using our general Julia function are ones of the form $f(z) = z^n + c$ for some positive integer $n$. A very cool pattern which emerges is that the number of regions that 'stick out' matches the degree in which we raise the function to while iterating over it.
-
-```{code-cell} ipython3
-fig, axes = plt.subplots(2, 3, figsize=(8, 8))
-base_degree = 2
-
-for deg, ax in enumerate(axes.ravel()):
-    degree = base_degree + deg
-    power = lambda z: np.power(z, degree)  # Create power function for current degree
-
-    diverge_len = general_julia(mesh, f=power, num_iter=15)
-    ax.imshow(diverge_len, extent=[-2, 2, -2, 2], cmap='binary')
-    ax.set_title(f'$f(z) = z^{degree} -1$')
-```
-
-Needless to say, there is a large amount of exploring that can be done by fiddling with the inputted function, value of $c$, number of iterations, radius and even the density of the mesh and choice of colours.
-
-+++
-
-### Newton Fractals
-
-Newton fractals are a specific class of fractals, where iterations involve adding or subtracting the ratio of a function (often a polynomial) and its derivative to the input values. Mathematically, it can be expressed as:
-
-$z := z - \frac{f(z)}{f'(z)}$
-
-We will define a general version of the fractal which will allow for different variations to be plotted by passing in our functions of choice.
-
-```{code-cell} ipython3
-def newton_fractal(mesh, f, df, num_iter=10, r=2):
-
-    z = mesh.copy()
-    diverge_len = np.zeros(z.shape)
-
-    for i in range(num_iter):
-        conv_mask = np.abs(z) < r
-        pz = f(z[conv_mask])
-        dp = df(z[conv_mask])
-        z[conv_mask] = z[conv_mask] - pz/dp
-        diverge_len[conv_mask] += 1
-
-    return diverge_len
-```
-
-Now we can experiment with some different functions. For polynomials, we can create our plots quite effortlessly using the [NumPy Polynomial class](https://numpy.org/doc/stable/reference/generated/numpy.polynomial.polynomial.Polynomial.html), which has built in functionality for computing derivatives.
-
-For example, let's try a higher-degree polynomial:
-
-```{code-cell} ipython3
-p = np.polynomial.Polynomial([-16, 0, 0, 0, 15, 0, 0, 0, 1])
-p
-```
-
-which has the derivative:
-
-```{code-cell} ipython3
-p.deriv()
-```
-
-```{code-cell} ipython3
-output = newton_fractal(mesh, p, p.deriv(), num_iter=15, r=2)
-kwargs = {'title': r'f(z) = z - \dfrac{(z^8 + 15z^4 - 16)}{(8z^7 + 60z^3)}', 'cmap': 'copper'}
-
-plot_fractal(output, **kwargs)
-```
-
-Beautiful! Let's try another one:
-
-f(z) = $tan^2(z)$
-
-$\frac{df}{dz} = 2 \cdot tan(z) sec^2(z) =\frac{2 \cdot tan(z)}{cos^2(z)}$
-
-This makes $\frac{f(z)}{f'(z)} =  tan^2(z) \cdot \frac{cos^2(z)}{2 \cdot tan(z)} = \frac{tan(z)\cdot cos^2(z)}{2} = \frac{sin(z)\cdot cos(z)}{2}$
-
-```{code-cell} ipython3
-def f_tan(z):
-    return np.square(np.tan(z))
-
-
-def d_tan(z):
-    return 2*np.tan(z) / np.square(np.cos(z))
-```
-
-```{code-cell} ipython3
-output = newton_fractal(mesh, f_tan, d_tan, num_iter=15, r=50)
-kwargs = {'title': r'f(z) = z - \dfrac{sin(z)cos(z)}{2}', 'cmap': 'binary'}
-
-plot_fractal(output, **kwargs);
-```
-
-Note that you sometimes have to play with the radius in order to get a neat looking fractal.
-
-Finally, we can go a little bit wild with our function selection
-
-$f(z) = \sum_{i=1}^{10} sin^i(z)$
-
-$\frac{df}{dz} = \sum_{i=1}^{10} i \cdot sin^{i-1}(z) \cdot cos(z)$
-
-```{code-cell} ipython3
-def sin_sum(z, n=10):
-    total = np.zeros(z.size, dtype=z.dtype)
-    for i in range(1, n+1):
-        total += np.power(np.sin(z), i)
-    return total
-
-
-def d_sin_sum(z, n=10):
-    total = np.zeros(z.size, dtype=z.dtype)
-    for i in range(1, n+1):
-        total += i * np.power(np.sin(z), i-1) * np.cos(z)
-    return total
-```
-
-We will denote this one 'Wacky fractal', as its equation would not be fun to try and put in the title.
-
-```{code-cell} ipython3
-output = newton_fractal(small_mesh, sin_sum, d_sin_sum, num_iter=10, r=1)
-kwargs = {'title': 'Wacky \\ fractal', 'figsize': (6, 6), 'extent': [-1, 1, -1, 1], 'cmap': 'terrain'}
-
-plot_fractal(output, **kwargs)
-```
-
-It is truly fascinating how distinct yet similar these fractals are with each other. This leads us to the final section.
-
-+++
-
-## Creating your own fractals
-
-
-What makes fractals more exciting is how much there is to explore once you become familiar with the basics. Now we will wrap up our tutorial by exploring some of the different ways one can experiment in creating unique fractals. I encourage you to try some things out on your own (if you have not done so already).
-
-One of the first places to experiment would be with the function for the generalized Julia set, where we can try passing in different functions as parameters.
-
-Let's start by choosing
-
-$f(z) = tan(z^2)$
-
-```{code-cell} ipython3
-def f(z):
-    return np.tan(np.square(z))
-```
-
-```{code-cell} ipython3
-output = general_julia(mesh, f=f, num_iter=15, radius=2.1)
-kwargs = {'title': 'f(z) = tan(z^2)', 'cmap': 'gist_stern'}
-
-plot_fractal(output, **kwargs);
-```
-
-What happens if we compose our defined function inside of a sine function?
-
-Let's try defining
+دعونا نحاول تعريف
 
 $g(z) = sin(f(z)) = sin(tan(z^2))$
 
@@ -523,7 +241,7 @@ kwargs = {'title': 'g(z) = sin(tan(z^2))', 'cmap': 'plasma_r'}
 plot_fractal(output, **kwargs);
 ```
 
-Next, let's create a function that applies both f and g to the inputs each iteration and adds the result together:
+بعد ذلك، لننشئ دالة تطبق كلاً من f و g على المدخلات في كل تكرار وتجمع النتيجة معاً:
 
 $h(z) = f(z) + g(z) = tan(z^2) + sin(tan(z^2))$
 
@@ -539,7 +257,7 @@ kwargs = {'title': 'h(z) = tan(z^2) + sin(tan(z^2))', 'figsize': (7, 7), 'extent
 plot_fractal(output, **kwargs);
 ```
 
-You can even create beautiful fractals through your own errors. Here is one that got created accidently by making a mistake in computing the derivative of a Newton fractal:
+يمكنك حتى إنشاء كسوريات جميلة من خلال أخطائك الخاصة. إليك واحدة تم إنشاؤها بالصدفة عن طريق ارتكاب خطأ في حساب مشتق (Derivative) لكسرية نيوتن:
 
 ```{code-cell} ipython3
 def accident(z):
@@ -553,36 +271,36 @@ kwargs = {'title': 'Accidental \\ fractal', 'cmap': 'Blues'}
 plot_fractal(output, **kwargs);
 ```
 
-Needless to say, there are a nearly endless supply of interesting fractal creations that can be made just by playing around with various combinations of NumPy universal functions and by tinkering with the parameters.
+وغني عن القول، هناك إمداد لا نهائي تقريباً من الإبداعات الكسورية المثيرة للاهتمام التي يمكن صنعها بمجرد اللعب بمجموعات مختلفة من دوال NumPy العامة والعبث بالمعلمات (Parameters).
 
 +++
 
-## In conclusion
+## في الختام (In conclusion)
 
-We learned a lot about generating fractals today. We saw how complicated fractals requiring many iterations could be computed efficiently using universal functions. We also took advantage of boolean indexing, which allowed for less computations to be made without having to individually verify each value. Finally, we learned a lot about fractals themselves. As a recap:
+تعلمنا الكثير عن توليد الكسوريات اليوم. رأينا كيف يمكن حساب الكسوريات المعقدة التي تتطلب العديد من التكرارات بكفاءة باستخدام الدوال العامة. استفدنا أيضاً من Boolean Indexing، مما سمح بإجراء حسابات أقل دون الحاجة إلى التحقق من كل قيمة بشكل فردي. أخيراً، تعلمنا الكثير عن الكسوريات نفسها. كملخص:
 
-- Fractal images are created by iterating a function over a set of values, and keeping tally of how long it takes for each value to pass a certain threshold
-- The colours in the image correspond to the tally counts of the values
-- The filled-in Julia set for $c$ consists of all complex numbers `z` in which $f(z) = z^2 + c$ converges
-- The Julia set for $c$ is the set of complex numbers that make up the boundary of the filled-in Julia set
-- The Mandelbrot set is all values $c$ in which $f(z) = z^2 + c$ converges at 0
-- Newton fractals use functions of the form $f(z) = z - \frac{p(z)}{p'(z)}$
-- The fractal images can vary as you adjust the number of iterations, radius of convergence, mesh size, colours, function choice and parameter choice
-
-+++
-
-## On your own
-
-- Play around with the parameters of the generalized Julia set function, try playing with the constant value, number of iterations, function choice, radius, and colour choice.
-
-- Visit the “List of fractals by Hausdorff dimension” Wikipedia page (linked in the Further reading section) and try writing a function for a fractal not mentioned in this tutorial.
+- يتم إنشاء الصور الكسورية عن طريق تكرار دالة على مجموعة من القيم، والاحتفاظ بسجل للمدة التي تستغرقها كل قيمة لتجاوز حد معين
+- تتوافق الألوان في الصورة مع عدد السجلات للقيم
+- تتكون مجموعة جوليا المملوءة (Filled-in Julia set) لـ $c$ من جميع الأعداد المركبة `z` التي تتقارب فيها $f(z) = z^2 + c$
+- مجموعة جوليا لـ $c$ هي مجموعة الأعداد المركبة التي تشكل حدود مجموعة جوليا المملوءة
+- مجموعة ماندلبروت هي جميع القيم $c$ التي تتقارب فيها $f(z) = z^2 + c$ عند 0
+- تستخدم كسوريات نيوتن دوالاً من الشكل $f(z) = z - \frac{p(z)}{p'(z)}$
+- يمكن أن تختلف الصور الكسورية مع ضبط عدد التكرارات، ونصف قطر التقارب، وحجم الشبكة، والألوان، واختيار الدالة واختيار المعلمات
 
 +++
 
-## Further reading
+## بمفردك (On your own)
 
-- [More information on the theory behind fractals](https://en.wikipedia.org/wiki/Fractal)
-- [Further reading on Julia sets](https://en.wikipedia.org/wiki/Julia_set)
-- [More details about the Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set)
-- [A more complete treatment of Newton Fractals](https://en.wikipedia.org/wiki/Newton_fractal)
-- [A list of different fractals](https://en.wikipedia.org/wiki/List_of_fractals_by_Hausdorff_dimension)
+- العب بمعلمات دالة مجموعة جوليا المعممة، جرب اللعب بالقيمة الثابتة، وعدد التكرارات، واختيار الدالة، ونصف القطر، واختيار اللون.
+
+- قم بزيارة صفحة ويكيبيديا "List of fractals by Hausdorff dimension" (الرابط موجود في قسم القراءة الإضافية) وحاول كتابة دالة لكسرية لم تُذكر في هذا الدليل التعليمي.
+
++++
+
+## قراءة إضافية (Further reading)
+
+- [مزيد من المعلومات حول النظرية وراء الكسوريات](https://en.wikipedia.org/wiki/Fractal)
+- [قراءة إضافية حول مجموعات جوليا](https://en.wikipedia.org/wiki/Julia_set)
+- [مزيد من التفاصيل حول مجموعة ماندلبروت](https://en.wikipedia.org/wiki/Mandelbrot_set)
+- [معالجة أكثر اكتمالاً لكسوريات نيوتن](https://en.wikipedia.org/wiki/Newton_fractal)
+- [قائمة بالكسوريات المختلفة](https://en.wikipedia.org/wiki/List_of_fractals_by_Hausdorff_dimension)

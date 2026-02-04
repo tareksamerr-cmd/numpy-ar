@@ -1,5 +1,5 @@
 ---
-short_title: Style Guide
+short_title: دليل الأسلوب
 jupytext:
   text_representation:
     extension: .md
@@ -12,117 +12,114 @@ kernelspec:
   name: python3
 ---
 
-# Learn to write a NumPy tutorial
+# تعلم كتابة درس تعليمي (tutorial) لـ NumPy
 
-![The Diátaxis framework for documentation dividing tutorials, how-to guides, explanation, and reference](https://diataxis.fr/_images/diataxis.png)
-<p style="text-align:right;font-style:italic;">Image credit: Daniele Procida's <a href="https://diataxis.fr/">Diátaxis framework</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>.</p>
+![إطار عمل Diátaxis للتوثيق يقسم الدروس التعليمية، أدلة الكيفية، الشرح، والمراجع](https://diataxis.fr/_images/diataxis.png)
+<p style="text-align:right;font-style:italic;">مصدر الصورة: <a href="https://diataxis.fr/">إطار عمل Diátaxis</a> لدانييل بروسيدا، مرخص بموجب <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a>.</p>
 
 +++
 
-## What you'll do
+## ما ستفعله (What you'll do)
 
-Guided by a template, you'll write a NumPy tutorial.
+مسترشدًا بقالب (template)، ستكتب tutorial لـ NumPy.
 
-## What you'll learn
+## ما ستتعلمه (What you'll learn)
 
-- You'll be able to craft a tutorial that follows a standard format and reflects good teaching practice.
+- ستكون قادرًا على صياغة tutorial يتبع تنسيقًا قياسيًا ويعكس ممارسة تعليمية جيدة.
 
-- You'll learn the three standard headings that open a NumPy tutorial -- **What you'll do,** **What you'll learn,** and **What you'll need** -- and some optional headings for the bottom -- **On your own,** **In practice,** **Further reading.**
+- ستتعلم العناوين القياسية الثلاثة التي تفتح tutorial لـ NumPy -- **ما ستفعله،** **ما ستتعلمه،** و **ما ستحتاجه** -- وبعض العناوين الاختيارية في الأسفل -- **بمفردك،** **في الممارسة،** **قراءة إضافية.**
 
-- You'll know what makes **What you'll learn** different from **What you'll do.**
+- ستعرف ما الذي يجعل **ما ستتعلمه** مختلفًا عن **ما ستفعله.**
 
-- You'll be able to distinguish a **tutorial** from a **how-to**.
+- ستكون قادرًا على التمييز بين **tutorial** و **how-to**.
 
-- You'll learn what not to put in a **What you'll learn** section.
+- ستتعلم ما لا يجب وضعه في قسم **ما ستتعلمه**.
 
-## What you'll need
+## ما ستحتاجه (What you'll need)
 
-- This template.
+- هذا الـ template.
 
-- A portrait of your intended reader.
-    - Just as schools list prerequisites for higher-level courses, you can assume readers know some things (which you must list, as noted in the next bullet). Overexplaining bogs down the tutorial and obscures the main points.
-    - But also put yourself in the reader's place and consider what to explain along the way.
-
-
-- "What you'll need" is a list of:
-
-    - packages that must be present on the user's machine before they begin. Don't include `numpy`.
-    - what you assumed the reader knew in the bullet above. Don't say `Python`;  `familiarity with Python iterators` is fine.
+- صورة لقارئك المستهدف.
+    - تمامًا كما تسرد المدارس المتطلبات الأساسية للدورات ذات المستوى الأعلى، يمكنك افتراض أن القراء يعرفون بعض الأشياء (التي يجب عليك سردها، كما هو مذكور في النقطة التالية). الشرح المفرط يعيق الـ tutorial ويحجب النقاط الرئيسية.
+    - ولكن ضع نفسك أيضًا مكان القارئ وفكر فيما يجب شرحه على طول الطريق.
 
 
-- Informality and enthusiasm. Imagine your reader not out in the audience but next to you.
+- "ما ستحتاجه" هي قائمة بـ:
 
-- Willingness to write incomplete sentences for the **What you'll need** bullets. They don't begin with the words "You'll need."
+    - الحزم (packages) التي يجب أن تكون موجودة على جهاز المستخدم قبل أن يبدأ. لا تضمن `numpy`.
+    - ما افترضت أن القارئ يعرفه في النقطة أعلاه. لا تقل `Python`؛ `الإلمام بمكررات Python (familiarity with Python iterators)` أمر جيد.
 
-- **Not** required are native English skills. Others can help.
+
+- عدم الرسمية والحماس. تخيل قارئك ليس في الجمهور بل بجانبك.
+
+- الرغبة في كتابة جمل غير كاملة لنقاط **ما ستحتاجه**. لا تبدأ بكلمات "ستحتاج إلى."
+
+- **ليس** مطلوبًا مهارات اللغة الإنجليزية الأصلية. يمكن للآخرين المساعدة.
 
 
 ***
 
-## After a horizontal rule, start your own headings
+## بعد خط أفقي، ابدأ عناوينك الخاصة
 
-Your tutorial steps begin here, using headings of your choice. At the end of the tutorial you'll place another horizontal rule and return to standard headings.
-
-
-## Titles have verbs
-
-In general, include a verb in the title; thus **Learn to write a NumPy tutorial** rather than "Rules for NumPy tutorials." Consider putting verbs in the headings as well.
+تبدأ خطوات الـ tutorial الخاصة بك هنا، باستخدام عناوين من اختيارك. في نهاية الـ tutorial، ستضع خطًا أفقيًا آخر وتعود إلى العناوين القياسية.
 
 
-## Titles are lowercase
+## العناوين تحتوي على أفعال
 
-Capitalize the first word, and after that only words that are ordinarily capitalized (so not "Titles Are Lowercase").
-
-
-## What to say in "What you'll learn"
-
-Avoid abstraction. "About" is a tipoff: Rather than writing "You'll learn about NumPy I/O," write "You'll learn how to read a comma-delimited text file into a NumPy array."
+بشكل عام، قم بتضمين فعل في العنوان؛ وبالتالي **تعلم كتابة tutorial لـ NumPy** بدلاً من "قواعد لـ tutorials NumPy." فكر في وضع أفعال في العناوين أيضًا.
 
 
-## Why are "What you'll do" and "What you'll learn" different?
+## العناوين تكون بأحرف صغيرة (lowercase)
 
-**What you'll do** is typically one sentence listing an end product: "You'll bake a cake." This makes the endpoint clear. **What you'll learn** lists the payoffs, and there may be many: "You'll learn to follow a recipe. You'll get practice measuring ingredients. You'll learn how to tell when a cake is ready to come out of the oven."
-
-
-## Avoid asides
-
-As explained by expert documentation writer [Daniele Procida](https://documentation.divio.com/tutorials):
-
-> Don’t explain anything the learner doesn’t need to know in order to complete the tutorial.
-
-Because tutorial steps are chosen to be clear and easy, they may fall short of
-production-grade. Yes, you should share this, but not during the tutorial, which should be straightforward and assured. The `In practice` section is the place for details, exceptions, alternatives, and similar fine print.
+قم بكتابة الحرف الأول من الكلمة الأولى بحرف كبير، وبعد ذلك فقط الكلمات التي يتم كتابتها عادةً بحرف كبير (لذلك ليس "Titles Are Lowercase").
 
 
-## Use plots and illustrations
+## ماذا تقول في "ما ستتعلمه"
 
-Figures are a double win; they amplify your points and make the page inviting.  Like English skills, artistic skills (or graphic-toolset skills) aren't required. Even if you only scan a hand illustration, somebody can polish it.
-
-An illustration below the title, even if it's only decorative, makes your page distinctive.
+تجنب التجريد (abstraction). "حول" هو مؤشر: بدلاً من كتابة "ستتعلم حول إدخال/إخراج NumPy (NumPy I/O)،" اكتب "ستتعلم كيفية قراءة ملف نصي محدد بفواصل (comma-delimited text file) إلى مصفوفة NumPy (NumPy array)."
 
 
-## Use real datasets when possible
+## لماذا يختلف "ما ستفعله" و "ما ستتعلمه"؟
 
-Readers are likelier to be engaged by a real use case. Be sure you have rights to the data.
+**ما ستفعله** عادة ما يكون جملة واحدة تسرد منتجًا نهائيًا: "ستخبز كعكة." هذا يجعل نقطة النهاية واضحة. **ما ستتعلمه** يسرد المكاسب، وقد تكون كثيرة: "ستتعلم اتباع وصفة. ستحصل على ممارسة في قياس المكونات. ستتعلم كيفية معرفة متى تكون الكعكة جاهزة للخروج من الفرن."
 
 
-## Tutorials and how-to's  -- similar but different
+## تجنب الملاحظات الجانبية (asides)
 
-Tutorial readers are out-of-towners who want a feel for the place. Pick any single destination and explain sights along the way.
+كما أوضح خبير كتابة الوثائق [دانييل بروسيدا](https://documentation.divio.com/tutorials):
 
-Unlike how-to readers, who know what they need, tutorial readers don't know what it is they don't know. So while tutorials need headings like **What you'll do** and **What you'll learn**, these headings would never appear in a how-to.
+> لا تشرح أي شيء لا يحتاج المتعلم إلى معرفته لإكمال الـ tutorial.
 
-## Make use of the Google doc style guide
+نظرًا لأن خطوات الـ tutorial يتم اختيارها لتكون واضحة وسهلة، فقد لا ترقى إلى مستوى الإنتاج (production-grade). نعم، يجب عليك مشاركة هذا، ولكن ليس أثناء الـ tutorial، الذي يجب أن يكون مباشرًا ومؤكدًا. قسم `In practice` هو المكان المناسب للتفاصيل والاستثناءات والبدائل والملاحظات الدقيقة المماثلة.
 
-NumPy docs follow the [Google developer documentation style guide](https://developers.google.com/style/). In addition to providing answers to recurring questions ("crossreference" or "cross-reference"?) the guide is filled with suggestions that will strengthen your doc writing.
 
-## The notebook must be fully executable
+## استخدم الرسوم البيانية والرسوم التوضيحية (plots and illustrations)
 
-`Run all cells` should execute all cells to the bottom of the file. If you're demonstrating a bad expression and want to show the traceback, comment
-the expression and put the traceback in a text cell.
+الرسوم البيانية هي فوز مزدوج؛ فهي تضخم نقاطك وتجعل الصفحة جذابة. مثل مهارات اللغة الإنجليزية، المهارات الفنية (أو مهارات مجموعة الأدوات الرسومية) ليست مطلوبة. حتى لو قمت بمسح رسم يدوي فقط، يمكن لشخص ما صقله.
 
-(Note that triple backquotes won't be enough for a traceback that contains `<text inside angle brackets>`,
-the angle brackets must be replaced by `&lt;` and `&gt;` as shown in the text cell markdown below.)
+رسم توضيحي أسفل العنوان، حتى لو كان زخرفيًا فقط، يجعل صفحتك مميزة.
+
+
+## استخدم مجموعات بيانات حقيقية (real datasets) عندما يكون ذلك ممكنًا
+
+من المرجح أن ينجذب القراء إلى حالة استخدام حقيقية. تأكد من أن لديك حقوق البيانات.
+
+
+## الدروس التعليمية (Tutorials) وأدلة الكيفية (how-to's) -- متشابهة ولكنها مختلفة
+
+قراء الـ tutorial هم غرباء يريدون الشعور بالمكان. اختر وجهة واحدة واشرح المعالم على طول الطريق.
+
+على عكس قراء الـ how-to، الذين يعرفون ما يحتاجون إليه، لا يعرف قراء الـ tutorial ما لا يعرفونه. لذلك بينما تحتاج الـ tutorials إلى عناوين مثل **ما ستفعله** و **ما ستتعلمه**، فإن هذه العناوين لن تظهر أبدًا في الـ how-to.
+
+## استفد من دليل أسلوب مستندات Google (Google doc style guide)
+
+تتبع وثائق NumPy [دليل أسلوب وثائق مطوري Google](https://developers.google.com/style/). بالإضافة إلى توفير إجابات للأسئلة المتكررة ("crossreference" أو "cross-reference"؟) يمتلئ الدليل باقتراحات من شأنها تعزيز كتابة وثائقك.
+
+## يجب أن يكون دفتر الملاحظات (notebook) قابلاً للتنفيذ بالكامل
+
+يجب أن يقوم `Run all cells` بتنفيذ جميع الخلايا حتى نهاية الملف. إذا كنت تعرض تعبيرًا سيئًا وتريد إظهار تتبع الخطأ (traceback)، فقم بالتعليق على التعبير وضع الـ traceback في خلية نصية.
+
+(لاحظ أن علامات الاقتباس الخلفية الثلاثية لن تكون كافية لـ traceback يحتوي على `<text inside angle brackets>`، يجب استبدال الأقواس الزاوية بـ `&lt;` و `&gt;` كما هو موضح في markdown خلية النص أدناه.)
 
 ```{code-cell}
 # 100/0
@@ -143,23 +140,23 @@ ZeroDivisionError: division by zero
 
 ***
 
-## On your own
+## بمفردك (On your own)
 
-Close the tutorial section with a horizontal rule. You're free to take any direction now, but here are three suggested sections.
+أغلق قسم الـ tutorial بخط أفقي. أنت حر في اتخاذ أي اتجاه الآن، ولكن إليك ثلاثة أقسام مقترحة.
 
-In an optional `On your own` section, you can offer an assignment for readers to exercise their new skills. If it's a question with an answer, provide it -- perhaps in a footnote to keep it from being a spoiler.
+في قسم `On your own` الاختياري، يمكنك تقديم مهمة للقراء لممارسة مهاراتهم الجديدة. إذا كان سؤالًا بإجابة، فقدمها -- ربما في حاشية سفلية لمنعها من أن تكون مفسدة.
 
-## In practice...
+## في الممارسة (In practice)...
 
-- The fine print that you avoided can go in this section.
-
-
-
-- Don't just say it's usually done another way; explain why.
+- التفاصيل الدقيقة التي تجنبتها يمكن أن توضع في هذا القسم.
 
 
-## Further reading
 
-- Ideally, rather than giving bare links, **Further reading** describes the references: [The Documentation System](https://documentation.divio.com/) is the inspiration for this tutorial, and describes three other kinds of documentation.
-- The Google guide is long; there's also [a summary](https://developers.google.com/style/highlights?hl=pt-br).
-- NumPy's website includes a [documentation how-to](https://numpy.org/devdocs/dev/howto-docs.html).
+- لا تقل فقط إنه يتم عادة بطريقة أخرى؛ اشرح لماذا.
+
+
+## قراءة إضافية (Further reading)
+
+- من الناحية المثالية، بدلاً من إعطاء روابط مجردة، يصف قسم **قراءة إضافية** المراجع: [نظام التوثيق (The Documentation System)](https://documentation.divio.com/) هو الإلهام لهذا الـ tutorial، ويصف ثلاثة أنواع أخرى من التوثيق.
+- دليل Google طويل؛ يوجد أيضًا [ملخص](https://developers.google.com/style/highlights?hl=pt-br).
+- يتضمن موقع NumPy على الويب [دليل كيفية كتابة الوثائق (documentation how-to)](https://numpy.org/devdocs/dev/howto-docs.html).

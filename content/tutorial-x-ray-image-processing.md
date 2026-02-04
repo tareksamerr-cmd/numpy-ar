@@ -11,107 +11,63 @@ kernelspec:
   name: python3
 ---
 
-# X-ray image processing
+# معالجة صور الأشعة السينية (X-ray image processing)
 
 +++
 
-This tutorial demonstrates how to read and process X-ray images with NumPy,
-imageio, Matplotlib and SciPy. You will learn how to load medical images, focus
-on certain parts, and visually compare them using the
-[Gaussian](https://en.wikipedia.org/wiki/Gaussian_filter),
-[Laplacian-Gaussian](https://en.wikipedia.org/wiki/Laplace_distribution),
-[Sobel](https://en.wikipedia.org/wiki/Sobel_operator), and
-[Canny](https://en.wikipedia.org/wiki/Canny_edge_detector) filters for edge
-detection.
+يوضح هذا البرنامج التعليمي كيفية قراءة ومعالجة صور الأشعة السينية (X-ray images) باستخدام NumPy و imageio و Matplotlib و SciPy. ستتعلم كيفية تحميل الصور الطبية، والتركيز على أجزاء معينة، ومقارنتها بصرياً باستخدام مرشحات (filters) [Gaussian](https://en.wikipedia.org/wiki/Gaussian_filter) و [Laplacian-Gaussian](https://en.wikipedia.org/wiki/Laplace_distribution) و [Sobel](https://en.wikipedia.org/wiki/Sobel_operator) و [Canny](https://en.wikipedia.org/wiki/Canny_edge_detector) لـ كشف الحواف (edge detection).
 
-X-ray image analysis can be part of your data analysis and
-[machine learning workflow](https://www.sciencedirect.com/science/article/pii/S235291481930214X)
-when, for example, you're building an algorithm that helps
-[detect pneumonia](https://www.kaggle.com/c/rsna-pneumonia-detection-challenge)
-as part of a [Kaggle](https://www.kaggle.com)
-[competition](https://www.kaggle.com/eduardomineo/u-net-lung-segmentation-montgomery-shenzhen).
-In the healthcare industry, medical image processing and analysis is
-particularly important when images are estimated to account for
-[at least 90%](https://www-03.ibm.com/press/us/en/pressrelease/51146.wss) of all
-medical data.
+يمكن أن يكون تحليل X-ray images جزءاً من تحليل البيانات و [سير عمل تعلم الآلة (machine learning workflow)](https://www.sciencedirect.com/science/article/pii/S235291481930214X) عندما تقوم، على سبيل المثال، ببناء خوارزمية تساعد في [كشف الالتهاب الرئوي (detect pneumonia)](https://www.kaggle.com/c/rsna-pneumonia-detection-challenge) كجزء من [مسابقة (competition)](https://www.kaggle.com/eduardomineo/u-net-lung-segmentation-montgomery-shenzhen) على منصة [Kaggle](https://www.kaggle.com). في صناعة الرعاية الصحية، تعد معالجة الصور الطبية وتحليلها أمراً مهماً بشكل خاص عندما تشير التقديرات إلى أن الصور تمثل [90% على الأقل](https://www-03.ibm.com/press/us/en/pressrelease/51146.wss) من جميع البيانات الطبية.
 
-You'll be working with radiology images from the
-[ChestX-ray8](https://www.nih.gov/news-events/news-releases/nih-clinical-center-provides-one-largest-publicly-available-chest-x-ray-datasets-scientific-community)
-dataset provided by the [National Institutes of Health (NIH)](http://nih.gov).
-ChestX-ray8 contains over 100,000 de-identified X-ray images in the PNG format
-from more than 30,000 patients. You can find ChestX-ray8's files on NIH's public
-Box [repository](https://nihcc.app.box.com/v/ChestXray-NIHCC) in the `/images`
-folder. (For more details, refer to the research
-[paper](http://openaccess.thecvf.com/content_cvpr_2017/papers/Wang_ChestX-ray8_Hospital-Scale_Chest_CVPR_2017_paper.pdf)
-published at CVPR (a computer vision conference) in 2017.)
+ستعمل مع صور الأشعة من مجموعة بيانات [ChestX-ray8](https://www.nih.gov/news-events/news-releases/nih-clinical-center-provides-one-largest-publicly-available-chest-x-ray-datasets-scientific-community) المقدمة من [المعاهد الوطنية للصحة (NIH)](http://nih.gov). تحتوي ChestX-ray8 على أكثر من 100,000 صورة X-ray مجهولة الهوية بتنسيق PNG لأكثر من 30,000 مريض. يمكنك العثور على ملفات ChestX-ray8 في [مستودع (repository)](https://nihcc.app.box.com/v/ChestXray-NIHCC) Box العام التابع لـ NIH في مجلد `/images`. (لمزيد من التفاصيل، راجع [الورقة البحثية (paper)](http://openaccess.thecvf.com/content_cvpr_2017/papers/Wang_ChestX-ray8_Hospital-Scale_Chest_CVPR_2017_paper.pdf) المنشورة في مؤتمر CVPR لرؤية الكمبيوتر في عام 2017).
 
-For your convenience, a small number of PNG images have been saved to this
-tutorial's repository under `tutorial-x-ray-image-processing/`, since
-ChestX-ray8 contains gigabytes of data and you may find it challenging to
-download it in batches.
+لراحتك، تم حفظ عدد صغير من صور PNG في repository هذا البرنامج التعليمي تحت `tutorial-x-ray-image-processing/` ، نظرًا لأن ChestX-ray8 تحتوي على غيغابايت من البيانات وقد تجد صعوبة في تحميلها على دفعات.
 
 ![A series of 9 x-ray images of the same region of a patient's chest is shown with different types of image processing filters applied to each image. Each x-ray shows different types of biological detail.](_static/tutorial-x-ray-image-processing.png)
 
 +++
 
-## Prerequisites
+## المتطلبات المسبقة (Prerequisites)
 
 +++
 
-The reader should have some knowledge of Python, NumPy arrays, and Matplotlib.
-To refresh the memory, you can take the
-[Python](https://docs.python.org/dev/tutorial/index.html) and Matplotlib
-[PyPlot](https://matplotlib.org/tutorials/introductory/pyplot.html) tutorials,
-and the NumPy [quickstart](https://numpy.org/devdocs/user/quickstart.html).
+يجب أن يكون لدى القارئ بعض المعرفة بلغة Python و مصفوفات NumPy (NumPy arrays) و Matplotlib. لتنشيط الذاكرة، يمكنك مراجعة دروس [Python](https://docs.python.org/dev/tutorial/index.html) و Matplotlib [PyPlot](https://matplotlib.org/tutorials/introductory/pyplot.html) و [البداية السريعة (quickstart)](https://numpy.org/devdocs/user/quickstart.html) لـ NumPy.
 
-The following packages are used in this tutorial:
+يتم استخدام الحزم (packages) التالية في هذا البرنامج التعليمي:
 
-- [imageio](https://imageio.github.io) for reading and writing image data. The
-healthcare industry usually works with the
-[DICOM](https://en.wikipedia.org/wiki/DICOM) format for medical imaging and
-[imageio](https://imageio.readthedocs.io/en/stable/format_dicom.html) should be
-well-suited for reading that format. For simplicity, in this tutorial you'll be
-working with PNG files.
-- [Matplotlib](https://matplotlib.org/) for data visualization.
-- [SciPy](https://www.scipy.org) for multi-dimensional image processing via
-[`ndimage`](https://docs.scipy.org/doc/scipy/reference/ndimage.html).
+- [imageio](https://imageio.github.io) لقراءة وكتابة بيانات الصور. تعمل صناعة الرعاية الصحية عادةً مع تنسيق [DICOM](https://en.wikipedia.org/wiki/DICOM) للتصوير الطبي، ويجب أن يكون [imageio](https://imageio.readthedocs.io/en/stable/format_dicom.html) مناسباً تماماً لقراءة هذا التنسيق. للتبسيط، ستعمل في هذا الدرس مع ملفات PNG.
+- [Matplotlib](https://matplotlib.org/) لـ تصور البيانات (data visualization).
+- [SciPy](https://www.scipy.org) لـ معالجة الصور متعددة الأبعاد (multi-dimensional image processing) عبر [`ndimage`](https://docs.scipy.org/doc/scipy/reference/ndimage.html).
 
-This tutorial can be run locally in an isolated environment, such as
-[Virtualenv](https://virtualenv.pypa.io/en/stable/) or
-[conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
-You can use [Jupyter Notebook or JupyterLab](https://jupyter.org/install) to run
-each notebook cell.
+يمكن تشغيل هذا البرنامج التعليمي محلياً في بيئة معزولة، مثل [Virtualenv](https://virtualenv.pypa.io/en/stable/) أو [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). يمكنك استخدام [Jupyter Notebook أو JupyterLab](https://jupyter.org/install) لتشغيل كل خلية في المفكرة.
 
 +++
 
-## Table of contents
+## جدول المحتويات (Table of contents)
 
 +++
 
-1. Examine an X-ray with `imageio`
-2. Combine images into a multi-dimensional array to demonstrate progression
-3. Edge detection using the Laplacian-Gaussian, Gaussian gradient, Sobel, and
-   Canny filters
-4. Apply masks to X-rays with `np.where()`
-5. Compare the results
+1. فحص صورة X-ray باستخدام `imageio`
+2. دمج الصور في مصفوفة متعددة الأبعاد لإظهار التقدم
+3. كشف الحواف باستخدام مرشحات Laplacian-Gaussian و Gaussian gradient و Sobel و Canny
+4. تطبيق الأقنعة (masks) على صور X-ray باستخدام `np.where()`
+5. مقارنة النتائج
 
 ---
 
 +++
 
-## Examine an X-ray with `imageio`
+## فحص صورة X-ray باستخدام `imageio` (Examine an X-ray with `imageio`)
 
 +++
 
-Let's begin with a simple example using just one X-ray image from the
-ChestX-ray8 dataset.
+لنبدأ بمثال بسيط باستخدام صورة X-ray واحدة فقط من مجموعة بيانات ChestX-ray8.
 
-The file — `00000011_001.png` — has been downloaded for you and saved in the
-`/tutorial-x-ray-image-processing` folder.
+تم تحميل الملف — `00000011_001.png` — وحفظه في مجلد `/tutorial-x-ray-image-processing`.
 
 +++
 
-**1.** Load the image with `imageio`:
+**1.** قم بتحميل الصورة باستخدام `imageio`:
 
 ```{code-cell}
 import os
@@ -122,15 +78,14 @@ DIR = "tutorial-x-ray-image-processing"
 xray_image = imageio.v3.imread(os.path.join(DIR, "00000011_001.png"))
 ```
 
-**2.** Check that its shape is 1024x1024 pixels and that the array is made up of
-8-bit integers:
+**2.** تأكد من أن أبعادها (shape) هي 1024x1024 بكسل وأن المصفوفة تتكون من أعداد صحيحة 8-بت (8-bit integers):
 
 ```{code-cell}
 print(xray_image.shape)
 print(xray_image.dtype)
 ```
 
-**3.** Import `matplotlib` and display the image in a grayscale colormap:
+**3.** استورد `matplotlib` واعرض الصورة بتدرج رمادي (grayscale colormap):
 
 ```{code-cell}
 import matplotlib.pyplot as plt
@@ -140,17 +95,13 @@ plt.axis("off")
 plt.show()
 ```
 
-## Combine images into a multidimensional array to demonstrate progression
+## دمج الصور في مصفوفة متعددة الأبعاد لإظهار التقدم (Combine images into a multidimensional array to demonstrate progression)
 
 +++
 
-In the next example, instead of 1 image you'll use 9 X-ray 1024x1024-pixel
-images from the ChestX-ray8 dataset that have been downloaded and extracted
-from one of the dataset files. They are numbered from `...000.png` to
-`...008.png` and let's assume they belong to the same patient.
+في المثال التالي، بدلاً من صورة واحدة، ستستخدم 9 صور X-ray بأبعاد 1024x1024 بكسل من مجموعة بيانات ChestX-ray8. وهي مرقمة من `...000.png` إلى `...008.png` ولنفترض أنها تنتمي لنفس المريض.
 
-**1.** Import NumPy, read in each of the X-rays, and create a three-dimensional
-array where the first dimension corresponds to image number:
+**1.** استورد NumPy، واقرأ كل صورة من صور X-ray، وأنشئ مصفوفة ثلاثية الأبعاد (three-dimensional array) حيث يتوافق البعد الأول مع رقم الصورة:
 
 ```{code-cell}
 import numpy as np
@@ -161,17 +112,15 @@ combined_xray_images_1 = np.array(
 )
 ```
 
-**2.** Check the shape of the new X-ray image array containing 9 stacked images:
+**2.** تحقق من أبعاد مصفوفة صور X-ray الجديدة التي تحتوي على 9 صور مكدسة:
 
 ```{code-cell}
 combined_xray_images_1.shape
 ```
 
-Note that the shape in the first dimension matches `num_imgs`, so the
-`combined_xray_images_1` array can be interpreted as a stack of 2D images.
+لاحظ أن shape في البعد الأول يطابق `num_imgs` ، لذا يمكن تفسير مصفوفة `combined_xray_images_1` على أنها حزمة من الصور ثنائية الأبعاد (2D images).
 
-**3.** You can now display the "health progress" by plotting each of frames next
-to each other using Matplotlib:
+**3.** يمكنك الآن عرض "تقدم الحالة الصحية" من خلال رسم كل إطار بجانب الآخر باستخدام Matplotlib:
 
 ```{code-cell} ipython3
 fig, axes = plt.subplots(nrows=1, ncols=num_imgs, figsize=(30, 30))
@@ -181,47 +130,31 @@ for img, ax in zip(combined_xray_images_1, axes):
     ax.axis('off')
 ```
 
-**4.** In addition, it can be helpful to show the progress as an animation.
-Let's create a GIF file with `imageio.mimwrite()` and display the result in the
-notebook:
+**4.** بالإضافة إلى ذلك، قد يكون من المفيد إظهار التقدم كرسوم متحركة (animation). لنقم بإنشاء ملف GIF باستخدام `imageio.mimwrite()` وعرض النتيجة في المفكرة:
 
 ```{code-cell} ipython3
 GIF_PATH = os.path.join(DIR, "xray_image.gif")
 imageio.mimwrite(GIF_PATH, combined_xray_images_1, format= ".gif", duration=1000)
 ```
 
-Which gives us:
+مما يعطينا:
 ![An animated gif repeatedly cycles through a series of 8 x-rays, showing the same viewpoint of the patient's chest at different points in time. The patient's bones and internal organs can be visually compared from frame to frame.](tutorial-x-ray-image-processing/xray_image.gif)
-## Edge detection using the Laplacian-Gaussian, Gaussian gradient, Sobel, and Canny filters
+
+## كشف الحواف باستخدام مرشحات Laplacian-Gaussian و Gaussian gradient و Sobel و Canny (Edge detection using the Laplacian-Gaussian, Gaussian gradient, Sobel, and Canny filters)
 
 +++
 
-When processing biomedical data, it can be useful to emphasize the 2D
-["edges"](https://en.wikipedia.org/wiki/Edge_detection) to focus on particular
-features in an image. To do that, using
-[image gradients](https://en.wikipedia.org/wiki/Image_gradient) can be
-particularly helpful when detecting the change of color pixel intensity.
+عند معالجة البيانات الطبية الحيوية (biomedical data)، قد يكون من المفيد التأكيد على "الحواف" (edges) ثنائية الأبعاد للتركيز على سمات معينة في الصورة. للقيام بذلك، يمكن أن يكون استخدام [تدرجات الصور (image gradients)](https://en.wikipedia.org/wiki/Image_gradient) مفيداً بشكل خاص عند اكتشاف تغير شدة لون البكسل.
 
 +++
 
-### The Laplace filter with Gaussian second derivatives
+### مرشح Laplace مع المشتقات الثانية لـ Gaussian (The Laplace filter with Gaussian second derivatives)
 
-Let's start with an n-dimensional
-[Laplace](https://en.wikipedia.org/wiki/Laplace_distribution) filter
-("Laplacian-Gaussian") that uses
-[Gaussian](https://en.wikipedia.org/wiki/Normal_distribution) second
-derivatives. This Laplacian method focuses on pixels with rapid intensity change
-in values and is combined with Gaussian smoothing to
-[remove noise](https://homepages.inf.ed.ac.uk/rbf/HIPR2/log.htm). Let's examine
-how it can be useful in analyzing 2D X-ray images.
+لنبدأ بمرشح [Laplace](https://en.wikipedia.org/wiki/Laplace_distribution) متعدد الأبعاد ("Laplacian-Gaussian") الذي يستخدم مشتقات [Gaussian](https://en.wikipedia.org/wiki/Normal_distribution) الثانية. تركز طريقة Laplacian هذه على البكسلات ذات التغير السريع في الشدة (intensity) وتدمج مع تنعيم Gaussian لـ [إزالة الضجيج (remove noise)](https://homepages.inf.ed.ac.uk/rbf/HIPR2/log.htm). لنفحص كيف يمكن أن يكون ذلك مفيداً في تحليل صور X-ray ثنائية الأبعاد.
 
 +++
 
-- The implementation of the Laplacian-Gaussian filter is relatively
-straightforward: 1) import the `ndimage` module from SciPy; and 2) call
-[`scipy.ndimage.gaussian_laplace()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_laplace.html)
-with a sigma (scalar) parameter, which affects the standard deviations of the
-Gaussian filter (you'll use `1` in the example below):
+- تنفيذ مرشح Laplacian-Gaussian بسيط نسبياً: 1) استيراد وحدة `ndimage` من SciPy؛ و 2) استدعاء [`scipy.ndimage.gaussian_laplace()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_laplace.html) مع معامل سيجما (sigma)، والذي يؤثر على الانحرافات المعيارية (standard deviations) لمرشح Gaussian (ستستخدم `1` في المثال أدناه):
 
 ```{code-cell}
 from scipy import ndimage
@@ -229,7 +162,7 @@ from scipy import ndimage
 xray_image_laplace_gaussian = ndimage.gaussian_laplace(xray_image, sigma=1)
 ```
 
-Display the original X-ray and the one with the Laplacian-Gaussian filter:
+اعرض X-ray الأصلية وتلك التي تم تطبيق مرشح Laplacian-Gaussian عليها:
 
 ```{code-cell}
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(10, 10))
@@ -243,26 +176,19 @@ for i in axes:
 plt.show()
 ```
 
-### The Gaussian gradient magnitude method
+### طريقة مقدار تدرج Gaussian (The Gaussian gradient magnitude method)
 
-Another method for edge detection that can be useful is the
-[Gaussian](https://en.wikipedia.org/wiki/Normal_distribution) (gradient) filter.
-It computes the multidimensional gradient magnitude with Gaussian derivatives
-and helps by remove
-[high-frequency](https://www.cs.cornell.edu/courses/cs6670/2011sp/lectures/lec02_filter.pdf)
-image components.
+طريقة أخرى لـ edge detection يمكن أن تكون مفيدة هي مرشح Gaussian (التدرج). يقوم بحساب مقدار التدرج متعدد الأبعاد بمشتقات Gaussian ويساعد في إزالة مكونات الصورة [عالية التردد (high-frequency)](https://www.cs.cornell.edu/courses/cs6670/2011sp/lectures/lec02_filter.pdf).
 
 +++
 
-**1.** Call [`scipy.ndimage.gaussian_gradient_magnitude()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_gradient_magnitude.html)
-with a sigma (scalar) parameter (for standard deviations; you'll use `2` in the
-example below):
+**1.** استدعِ [`scipy.ndimage.gaussian_gradient_magnitude()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_gradient_magnitude.html) مع معامل sigma (للانحرافات المعيارية؛ ستستخدم `2` في المثال أدناه):
 
 ```{code-cell}
 x_ray_image_gaussian_gradient = ndimage.gaussian_gradient_magnitude(xray_image, sigma=2)
 ```
 
-**2.** Display the original X-ray and the one with the Gaussian gradient filter:
+**2.** اعرض X-ray الأصلية وتلك التي تم تطبيق مرشح Gaussian gradient عليها:
 
 ```{code-cell}
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(10, 10))
@@ -276,31 +202,15 @@ for i in axes:
 plt.show()
 ```
 
-### The Sobel-Feldman operator (the Sobel filter)
+### عامل Sobel-Feldman (مرشح Sobel) (The Sobel-Feldman operator (the Sobel filter))
 
-To find regions of high spatial frequency (the edges or the edge maps) along the
-horizontal and vertical axes of a 2D X-ray image, you can use the
-[Sobel-Feldman operator (Sobel filter)](https://en.wikipedia.org/wiki/Sobel_operator)
-technique. The Sobel filter applies two 3x3 kernel matrices — one for each axis
-— onto the X-ray through a [convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution).
-Then, these two points (gradients) are combined using the
-[Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem) to
-produce a gradient magnitude.
+للعثور على مناطق ذات تردد مكاني عالٍ (الحواف أو خرائط الحواف) على طول المحاور الأفقية والرأسية لصورة X-ray ثنائية الأبعاد، يمكنك استخدام تقنية [عامل Sobel-Feldman (مرشح Sobel)](https://en.wikipedia.org/wiki/Sobel_operator). يطبق مرشح Sobel مصفوفتي نواة (kernel matrices) بحجم 3x3 — واحدة لكل محور — على X-ray من خلال [التفاف (convolution)](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution). بعد ذلك، يتم دمج هاتين النقطتين (التدرجات) باستخدام [نظرية فيثاغورس (Pythagorean theorem)](https://en.wikipedia.org/wiki/Pythagorean_theorem) لإنتاج مقدار التدرج (gradient magnitude).
 
 +++
 
-**1.** Use the Sobel filters — ([`scipy.ndimage.sobel()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.sobel.html))
-— on x- and y-axes of the X-ray. Then, calculate the distance between `x` and
-`y` (with the Sobel filters applied to them) using the
-[Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem) and
-NumPy's [`np.hypot()`](https://numpy.org/doc/stable/reference/generated/numpy.hypot.html)
-to obtain the magnitude. Finally, normalize the rescaled image for the pixel
-values to be between 0 and 255.
+**1.** استخدم مرشحات Sobel — ([`scipy.ndimage.sobel()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.sobel.html)) — على محوري x و y للصورة. ثم احسب المسافة بين `x` و `y` باستخدام Pythagorean theorem ودالة [`np.hypot()`](https://numpy.org/doc/stable/reference/generated/numpy.hypot.html) من NumPy للحصول على المقدار. أخيراً، قم بـ [تطبيع (normalize)](https://en.wikipedia.org/wiki/Normalization_%28image_processing%29) الصورة الناتجة لتكون قيم البكسل بين 0 و 255.
 
-[Image normalization](https://en.wikipedia.org/wiki/Normalization_%28image_processing%29)
-follows the `output_channel = 255.0 * (input_channel - min_value) / (max_value - min_value)`
-[formula](http://dev.ipol.im/~nmonzon/Normalization.pdf). Because you're
-using a grayscale image, you need to normalize just one channel.
+يتبع [تطبيع الصورة (Image normalization)](https://en.wikipedia.org/wiki/Normalization_%28image_processing%29) الصيغة التالية: `output_channel = 255.0 * (input_channel - min_value) / (max_value - min_value)`. نظراً لأنك تستخدم صورة grayscale، فأنت بحاجة إلى normalize قناة واحدة فقط.
 
 ```{code-cell}
 x_sobel = ndimage.sobel(xray_image, axis=0)
@@ -311,9 +221,7 @@ xray_image_sobel = np.hypot(x_sobel, y_sobel)
 xray_image_sobel *= 255.0 / np.max(xray_image_sobel)
 ```
 
-**2.** Change the new image array data type to the 32-bit floating-point format
-from `float16` to [make it compatible](https://github.com/matplotlib/matplotlib/issues/15432)
-with Matplotlib:
+**2.** قم بتغيير نوع بيانات مصفوفة الصورة الجديدة إلى تنسيق الفاصلة العائمة 32-بت (32-bit floating-point) لـ [جعلها متوافقة](https://github.com/matplotlib/matplotlib/issues/15432) مع Matplotlib:
 
 ```{code-cell}
 print("The data type - before: ", xray_image_sobel.dtype)
@@ -323,9 +231,7 @@ xray_image_sobel = xray_image_sobel.astype("float32")
 print("The data type - after: ", xray_image_sobel.dtype)
 ```
 
-**3.** Display the original X-ray and the one with the Sobel "edge" filter
-applied. Note that both the grayscale and `CMRmap` colormaps are used to help
-emphasize the edges:
+**3.** اعرض X-ray الأصلية وتلك التي تم تطبيق مرشح Sobel عليها. لاحظ استخدام تدرجات الألوان grayscale و `CMRmap` للمساعدة في التأكيد على الحواف:
 
 ```{code-cell}
 fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(15, 15))
@@ -341,33 +247,15 @@ for i in axes:
 plt.show()
 ```
 
-### The Canny filter
+### مرشح Canny (The Canny filter)
 
-You can also consider using another well-known filter for edge detection called
-the [Canny filter](https://en.wikipedia.org/wiki/Canny_edge_detector).
+يمكنك أيضاً التفكير في استخدام مرشح معروف آخر لـ edge detection يسمى [مرشح Canny (Canny filter)](https://en.wikipedia.org/wiki/Canny_edge_detector).
 
-First, you apply a [Gaussian](https://en.wikipedia.org/wiki/Gaussian_filter)
-filter to remove the noise in an image. In this example, you're using using the
-[Fourier](https://en.wikipedia.org/wiki/Fourier_transform) filter which
-smoothens the X-ray through a [convolution](https://en.wikipedia.org/wiki/Convolution)
-process. Next, you apply the [Prewitt filter](https://en.wikipedia.org/wiki/Prewitt_operator)
-on each of the 2 axes of the image to help detect some of the edges — this will
-result in 2 gradient values. Similar to the Sobel filter, the Prewitt operator
-also applies two 3x3 kernel matrices — one for each axis — onto the X-ray
-through a [convolution](https://en.wikipedia.org/wiki/Kernel_(image_processing)#Convolution).
-In the end, you compute the magnitude between the two gradients using the
-[Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem) and
-[normalize](https://en.wikipedia.org/wiki/Normalization_%28image_processing%29)
-the images, as before.
+أولاً، تقوم بتطبيق مرشح Gaussian لإزالة الضجيج في الصورة. في هذا المثال، تستخدم مرشح [Fourier](https://en.wikipedia.org/wiki/Fourier_transform) الذي ينعم X-ray من خلال عملية convolution. بعد ذلك، تقوم بتطبيق [مرشح Prewitt (Prewitt filter)](https://en.wikipedia.org/wiki/Prewitt_operator) على كل من محوري الصورة للمساعدة في اكتشاف بعض الحواف. في النهاية، تقوم بحساب المقدار بين التدرجين باستخدام Pythagorean theorem وتقوم بـ normalize للصور كما فعلنا سابقاً.
 
 +++
 
-**1.** Use SciPy's Fourier filters — [`scipy.ndimage.fourier_gaussian()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.fourier_gaussian.html)
-— with a small `sigma` value to remove some of the noise from the X-ray. Then,
-calculate two gradients using [`scipy.ndimage.prewitt()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.prewitt.html).
-Next, measure the distance between the gradients using NumPy's `np.hypot()`.
-Finally, [normalize](https://en.wikipedia.org/wiki/Normalization_%28image_processing%29)
-the rescaled image, as before.
+**1.** استخدم مرشحات Fourier من SciPy — [`scipy.ndimage.fourier_gaussian()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.fourier_gaussian.html) — مع قيمة `sigma` صغيرة لإزالة بعض الضجيج. ثم احسب تدرجين باستخدام [`scipy.ndimage.prewitt()`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.prewitt.html). بعد ذلك، قم بقياس المسافة بين التدرجات باستخدام `np.hypot()`. أخيراً، قم بـ normalize للصورة الناتجة.
 
 ```{code-cell}
 fourier_gaussian = ndimage.fourier_gaussian(xray_image, sigma=0.05)
@@ -382,9 +270,7 @@ xray_image_canny *= 255.0 / np.max(xray_image_canny)
 print("The data type - ", xray_image_canny.dtype)
 ```
 
-**2.** Plot the original X-ray image and the ones with the edges detected with
-the help of the Canny filter technique. The edges can be emphasized using the
-`prism`, `nipy_spectral`, and `terrain` Matplotlib colormaps.
+**2.** ارسم صورة X-ray الأصلية وتلك التي تم اكتشاف حوافها بمساعدة تقنية Canny filter. يمكن التأكيد على الحواف باستخدام تدرجات الألوان `prism` و `nipy_spectral` و `terrain` في Matplotlib.
 
 ```{code-cell}
 fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(20, 15))
@@ -402,23 +288,17 @@ for i in axes:
 plt.show()
 ```
 
-## Apply masks to X-rays with `np.where()`
+## تطبيق الأقنعة على صور X-ray باستخدام `np.where()` (Apply masks to X-rays with `np.where()`)
 
 +++
 
-To screen out only certain pixels in X-ray images to help detect particular
-features, you can apply masks with NumPy's
-[`np.where(condition: array_like (bool), x: array_like, y: ndarray)`](https://numpy.org/doc/stable/reference/generated/numpy.where.html)
-that returns `x` when `True` and `y` when `False`.
+لحجب بكسلات معينة فقط في صور X-ray للمساعدة في اكتشاف سمات معينة، يمكنك تطبيق الأقنعة (masks) باستخدام دالة [`np.where(condition, x, y)`](https://numpy.org/doc/stable/reference/generated/numpy.where.html) من NumPy التي تعيد `x` عندما يكون الشرط `True` و `y` عندما يكون `False`.
 
-Identifying regions of interest — certain sets of pixels in an image — can be
-useful and masks serve as boolean arrays of the same shape as the original
-image.
+يمكن أن يكون تحديد مناطق الاهتمام (regions of interest) — مجموعات معينة من البكسلات في الصورة — مفيداً، وتعمل الأقنعة كمصفوفات بولية (boolean arrays) لها نفس أبعاد الصورة الأصلية.
 
 +++
 
-**1.** Retrieve some basics statistics about the pixel values in the original
-X-ray image you've been working with:
+**1.** استخرج بعض الإحصائيات الأساسية حول قيم البكسل في صورة X-ray الأصلية:
 
 ```{code-cell}
 print("The data type of the X-ray image is: ", xray_image.dtype)
@@ -428,10 +308,7 @@ print("The average pixel value is: ", np.mean(xray_image))
 print("The median pixel value is: ", np.median(xray_image))
 ```
 
-**2.** The array data type is `uint8` and the minimum/maximum value results
-suggest that all 256 colors (from `0` to `255`) are used in the X-ray. Let's
-visualize the _pixel intensity distribution_ of the original raw X-ray image
-with `ndimage.histogram()` and Matplotlib:
+**2.** نوع بيانات المصفوفة هو `uint8` وتشير نتائج القيم الدنيا/القصوى إلى أن جميع الألوان الـ 256 (من `0` إلى `255`) مستخدمة. لنقم بتصور *توزيع شدة البكسل (pixel intensity distribution)* للصورة الأصلية باستخدام `ndimage.histogram()` و Matplotlib:
 
 ```{code-cell}
 pixel_intensity_distribution = ndimage.histogram(
@@ -443,16 +320,13 @@ plt.title("Pixel intensity distribution")
 plt.show()
 ```
 
-As the pixel intensity distribution suggests, there are many low (between around
-0 and 20) and very high (between around 200 and 240) pixel values.
+كما يشير pixel intensity distribution، هناك العديد من قيم البكسل المنخفضة (بين 0 و 20 تقريباً) والعالية جداً (بين 200 و 240 تقريباً).
 
-**3.** You can create different conditional masks with NumPy's `np.where()` —
-for example, let's have only those values of the image with the pixels exceeding
-a certain threshold:
+**3.** يمكنك إنشاء أقنعة شرطية مختلفة باستخدام `np.where()` — على سبيل المثال، لنحتفظ فقط بتلك القيم من الصورة التي تتجاوز فيها البكسلات عتبة (threshold) معينة:
 
 ```{code-cell}
-# The threshold is "greater than 150"
-# Return the original image if true, `0` otherwise
+# العتبة هي "أكبر من 150"
+# أعد الصورة الأصلية إذا كان الشرط صحيحاً، و `0` خلاف ذلك
 xray_image_mask_noisy = np.where(xray_image > 150, xray_image, 0)
 
 plt.imshow(xray_image_mask_noisy, cmap="gray")
@@ -461,8 +335,8 @@ plt.show()
 ```
 
 ```{code-cell}
-# The threshold is "greater than 150"
-# Return `1` if true, `0` otherwise
+# العتبة هي "أكبر من 150"
+# أعد `1` إذا كان الشرط صحيحاً، و `0` خلاف ذلك
 xray_image_mask_less_noisy = np.where(xray_image > 150, 1, 0)
 
 plt.imshow(xray_image_mask_less_noisy, cmap="gray")
@@ -470,12 +344,11 @@ plt.axis("off")
 plt.show()
 ```
 
-## Compare the results
+## مقارنة النتائج (Compare the results)
 
 +++
 
-Let's display some of the results of processed X-ray images you've worked with
-so far:
+لنقم بعرض بعض نتائج صور X-ray المعالجة التي عملت عليها حتى الآن:
 
 ```{code-cell}
 fig, axes = plt.subplots(nrows=1, ncols=9, figsize=(30, 30))
@@ -503,26 +376,20 @@ for i in axes:
 plt.show()
 ```
 
-## Next steps
+## الخطوات التالية (Next steps)
 
 +++
 
-If you want to use your own samples, you can use
-[this image](https://openi.nlm.nih.gov/detailedresult?img=CXR3666_IM-1824-1001&query=chest%20infection&it=xg&req=4&npos=32)
-or search for various other ones on the [_Openi_](https://openi.nlm.nih.gov)
-database. Openi contains many biomedical images and it can be especially helpful
-if you have low bandwidth and/or are restricted by the amount of data you can
-download.
+إذا كنت ترغب في استخدام عيناتك الخاصة، يمكنك استخدام [هذه الصورة](https://openi.nlm.nih.gov/detailedresult?img=CXR3666_IM-1824-1001&query=chest%20infection&it=xg&req=4&npos=32) أو البحث عن صور أخرى متنوعة في قاعدة بيانات [_Openi_](https://openi.nlm.nih.gov). تحتوي Openi على العديد من الصور الطبية الحيوية ويمكن أن تكون مفيدة بشكل خاص إذا كان لديك عرض نطاق ترددي منخفض و/أو كنت مقيداً بكمية البيانات التي يمكنك تحميلها.
 
-To learn more about image processing in the context of biomedical image data or
-simply edge detection, you may find the following material useful:
+لمعرفة المزيد حول معالجة الصور في سياق بيانات الصور الطبية الحيوية أو ببساطة edge detection، قد تجد المواد التالية مفيدة:
 
-- [DICOM processing and segmentation in Python](https://www.raddq.com/dicom-processing-segmentation-visualization-in-python/) with Scikit-Image and pydicom (Radiology Data Quest)
-- [Image manipulation and processing using Numpy and Scipy](https://scipy-lectures.org/advanced/image_processing/index.html) (Scipy Lecture Notes)
-- [Intensity values](https://s3.amazonaws.com/assets.datacamp.com/production/course_7032/slides/chapter2.pdf) (presentation, DataCamp)
-- [Object detection with Raspberry Pi and Python](https://makersportal.com/blog/2019/4/23/image-processing-with-raspberry-pi-and-python-part-ii-spatial-statistics-and-correlations) (Maker Portal)
-- [X-ray data preparation and segmentation](https://www.kaggle.com/eduardomineo/u-net-lung-segmentation-montgomery-shenzhen) with deep learning (a Kaggle-hosted Jupyter notebook)
-- [Image filtering](https://www.cs.cornell.edu/courses/cs6670/2011sp/lectures/lec02_filter.pdf) (lecture slides, CS6670: Computer Vision, Cornell University)
-- [Edge detection in Python](https://scikit-image.org/docs/0.25.x/auto_examples/edges/plot_edge_filter.html)
-- [Edge detection](https://datacarpentry.github.io/image-processing/edge-detection.html) with Scikit-Image (Data Carpentry)
-- [Image gradients and gradient filtering](https://www.cs.cmu.edu/~16385/s17/Slides/4.0_Image_Gradients_and_Gradient_Filtering.pdf) (lecture slides, 16-385 Computer Vision, Carnegie Mellon University)
+- [معالجة وتقسيم DICOM في Python](https://www.raddq.com/dicom-processing-segmentation-visualization-in-python/) باستخدام Scikit-Image و pydicom (Radiology Data Quest)
+- [التلاعب بالصور ومعالجتها باستخدام Numpy و Scipy](https://scipy-lectures.org/advanced/image_processing/index.html) (Scipy Lecture Notes)
+- [قيم الشدة (Intensity values)](https://s3.amazonaws.com/assets.datacamp.com/production/course_7032/slides/chapter2.pdf) (عرض تقديمي، DataCamp)
+- [كشف الكائنات باستخدام Raspberry Pi و Python](https://makersportal.com/blog/2019/4/23/image-processing-with-raspberry-pi-and-python-part-ii-spatial-statistics-and-correlations) (Maker Portal)
+- [تحضير وتقسيم بيانات X-ray](https://www.kaggle.com/eduardomineo/u-net-lung-segmentation-montgomery-shenzhen) باستخدام التعلم العميق (مفكرة Jupyter مستضافة على Kaggle)
+- [تصفية الصور (Image filtering)](https://www.cs.cornell.edu/courses/cs6670/2011sp/lectures/lec02_filter.pdf) (شرائح محاضرة، CS6670: رؤية الكمبيوتر، جامعة كورنيل)
+- [كشف الحواف في Python](https://scikit-image.org/docs/0.25.x/auto_examples/edges/plot_edge_filter.html)
+- [كشف الحواف](https://datacarpentry.github.io/image-processing/edge-detection.html) باستخدام Scikit-Image (Data Carpentry)
+- [تدرجات الصور وتصفية التدرج](https://www.cs.cmu.edu/~16385/s17/Slides/4.0_Image_Gradients_and_Gradient_Filtering.pdf) (شرائح محاضرة، 16-385 رؤية الكمبيوتر، جامعة كارنيجي ميلون)
