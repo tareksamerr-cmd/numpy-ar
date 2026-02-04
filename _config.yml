@@ -1,0 +1,7 @@
+title: "دروس NumPy بالعربي"
+author: "Tarek Sameer"
+
+language: ar
+
+html:
+  extra_css: ["custom.css"] 
