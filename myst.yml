@@ -1,14 +1,15 @@
 version: 1
 project:
-  title: Numpy Tutorials
-  # description:
-  # keywords: []
-  authors: Numpy Community
-  github: https://github.com/numpy/numpy-tutorials
+  title: "دروس NumPy بالعربي"
+  authors: "Tarek Sameer"
+  github: https://github.com/tareksamerr-cmd/numpy-ar
+  # تحديد اللغة العربية لتفعيل خصائص القوالب الافتراضية للعربية
+  language: ar 
+
   toc:
     - file: site/index.md
 
-    - title: Applications
+    - title: التطبيقات (Applications)
       children:
         - file: content/mooreslaw-tutorial.md
         - file: content/tutorial-deep-learning-on-mnist.md
@@ -17,19 +18,21 @@ project:
         - file: content/tutorial-plotting-fractals.md
         - file: content/tutorial-air-quality-analysis.md
 
-    - title: Features
+    - title: المميزات (Features)
       children:
         - file: content/tutorial-svd.md
         - file: content/save-load-arrays.md
         - file: content/tutorial-ma.md
-    - title: Contributing
+        
+    - title: المساهمة (Contributing)
       file: site/contributing.md
       children:
         - file: content/tutorial-style-guide.md
-
 
 site:
   template: book-theme
   options:
     favicon: site/_static/favicon.png
     logo: site/_static/numpylogo.svg
+    # ربط ملف التنسيق المخصص الذي سننشئه للتحكم في الاتجاه
+    extra_css: site/_static/custom.css
