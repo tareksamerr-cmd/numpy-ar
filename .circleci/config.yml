@@ -1,5 +1,16 @@
 version: 2.1
 
+title: "دروس NumPy بالعربي"
+author: "Tarek Amer"
+# ... إعدادات أخرى ...
+
+# إضافة هذا السطر
+language: ar
+
+html:
+  extra_css: ["custom.css"] # سنحتاج لهذا الملف لإصلاح الأكواد
+
+
 
 jobs:
   build-docs:
