@@ -2,6 +2,7 @@ title: "دروس NumPy بالعربي"
 author: "Tarek Sameer"
 
 language: ar
+text-direction = "rtl"
 
 html:
   extra_css: ["custom.css"] 
