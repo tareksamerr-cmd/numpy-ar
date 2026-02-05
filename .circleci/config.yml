@@ -1,6 +1,5 @@
 version: 2.1
 
-
 jobs:
   build-docs:
     docker:
@@ -17,8 +16,10 @@ jobs:
           name: Build documentation
           no_output_timeout: 5m
           environment:
-            # Ensure this is same as store_artifacts path below
             DOCS_PATH: _build/html
+            # إجبار البيئة على دعم الترميز العربي لضمان سلامة النصوص
+            LC_ALL: C.UTF-8
+            LANG: C.UTF-8
           command: |
             export BASE_URL="/output/job/$CIRCLE_WORKFLOW_JOB_ID/artifacts/0/$DOCS_PATH"
             export OMP_NUM_THREADS=1
