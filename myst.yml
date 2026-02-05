@@ -3,13 +3,12 @@ project:
   title: "دروس NumPy بالعربي"
   authors: "Tarek Sameer"
   github: https://github.com/tareksamerr-cmd/numpy-ar
-  # تحديد اللغة العربية لتفعيل خصائص القوالب الافتراضية للعربية
-  language: ar 
-  text-direction : "rtl"
+  # تفعيل اللغة العربية والاتجاه من اليمين لليسار
+  language: ar
+  text_direction: rtl
 
   toc:
     - file: site/index.md
-
     - title: التطبيقات (Applications)
       children:
         - file: content/mooreslaw-tutorial.md
@@ -18,13 +17,11 @@ project:
         - file: content/tutorial-static_equilibrium.md
         - file: content/tutorial-plotting-fractals.md
         - file: content/tutorial-air-quality-analysis.md
-
     - title: المميزات (Features)
       children:
         - file: content/tutorial-svd.md
         - file: content/save-load-arrays.md
         - file: content/tutorial-ma.md
-        
     - title: المساهمة (Contributing)
       file: site/contributing.md
       children:
@@ -35,5 +32,5 @@ site:
   options:
     favicon: site/_static/favicon.png
     logo: site/_static/numpylogo.svg
-    # ربط ملف التنسيق المخصص الذي سننشئه للتحكم في الاتجاه
+    # ملف التنسيق المخصص للتحكم في المظهر
     extra_css: site/_static/custom.css
