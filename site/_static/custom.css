@@ -1,20 +1,23 @@
-/* إجبار الصفحة بالكامل على اتجاه اليمين إلى اليسار */
+/* ضبط الاتجاه العام */
 body {
     direction: rtl;
     text-align: right;
 }
 
-/* ضبط اتجاه القائمة الجانبية (Sidebar) */
+/* الحفاظ على اتجاه الكود البرمجي من اليسار لليمين */
+code, pre {
+    direction: ltr !important;
+    text-align: left !important;
+    display: block;
+}
+
+/* ضبط مكان القائمة الجانبية */
 .bd-sidebar {
-    order: 1; /* لنقل القائمة لليمين في بعض القوالب */
+    order: 1;
 }
 
-/* تصحيح اتجاه الأيقونات والروابط داخل القوائم */
-.nav-link {
-    text-align: right;
-}
-
-/* إذا كنت تستخدم خطوطاً عربية احترافية، يمكنك إضافتها هنا */
-body, h1, h2, h3, p {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ضبط المسافات للأيقونات في القائمة */
+.nav-link i {
+    margin-left: 10px;
+    margin-right: 0px;
 }
