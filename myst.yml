@@ -5,6 +5,7 @@ project:
   github: https://github.com/tareksamerr-cmd/numpy-ar
   # تحديد اللغة العربية لتفعيل خصائص القوالب الافتراضية للعربية
   language: ar 
+  text-direction = "rtl"
 
   toc:
     - file: site/index.md
