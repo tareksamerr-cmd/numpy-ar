@@ -1,18 +1,20 @@
-/* تحويل كامل الموقع لليمين */
-body, html {
-    direction: rtl !important;
-    text-align: right !important;
-}
-
-/* الحفاظ على كود SVD والنتائج من اليسار لليمين */
-pre, code, .highlight, .jp-CodeCell, .math {
-    direction: ltr !important;
-    text-align: left !important;
-    unicode-bidi: embed;
-}
-
-/* تعديل اتجاه القوائم الجانبية */
-.side-bar, .toc, .bd-sidebar {
+/* إجبار الصفحة بالكامل على اتجاه اليمين إلى اليسار */
+body {
     direction: rtl;
     text-align: right;
+}
+
+/* ضبط اتجاه القائمة الجانبية (Sidebar) */
+.bd-sidebar {
+    order: 1; /* لنقل القائمة لليمين في بعض القوالب */
+}
+
+/* تصحيح اتجاه الأيقونات والروابط داخل القوائم */
+.nav-link {
+    text-align: right;
+}
+
+/* إذا كنت تستخدم خطوطاً عربية احترافية، يمكنك إضافتها هنا */
+body, h1, h2, h3, p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
